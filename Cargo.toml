@@ -16,3 +16,4 @@ edition = "2018"
 
 [features]
 with_panic = []
+with_exception = []

@@ -2,7 +2,7 @@
  * Copyright (c) 2019 by the authors
  * 
  * Author: André Borrmann 
- * License: ???
+ * License: Apache License 2.0
  **********************************************************************************************************************/
 #![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.0.1")]
 #![no_std]
@@ -19,6 +19,9 @@
 // hang the panicing core
 #[cfg(feature = "with_panic")]
 mod panic;
+
+#[cfg(feature = "with_exception")]
+mod exception;
 
 // including the assembly files
 global_asm!(include_str!("./asm/boot.s"));

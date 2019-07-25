@@ -2,7 +2,7 @@
  * Copyright (c) 2019 by the authors
  * 
  * Author: André Borrmann 
- * License: ???
+ * License: Apache License 2.0
  **********************************************************************************************************************/
 
 //! # Default panic handler implementation

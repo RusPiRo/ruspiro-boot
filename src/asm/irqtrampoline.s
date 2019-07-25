@@ -1,6 +1,10 @@
 /**
  * Initial setup for the Interrupt trampoline functions that will branch into rust environment
  * in case the corresponding Exception/Interrupt is raised
+ *
+ * Copyright (c) 2019 by the authors
+ * Author: André Borrmann
+ * License: Apache License 2.0
  */
 
 .global __exception_handler_Default

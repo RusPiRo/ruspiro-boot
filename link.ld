@@ -4,8 +4,9 @@
  * Entry point address need to be 0x8000, the binarry is not allowed to start prior to this address
  * Stack pointer need to be at least 8Bit and heap pointer 16Bit aligned
  *
+ * Copyright (c) 2019 by the authors
  * Author: André Borrmann
- * License: ???
+ * License: Apache License 2.0
  */
 
 ENTRY(__boot)
@@ -87,6 +88,3 @@ PROVIDE(__prefetch_abort_h = __exception_handler_Default);
 PROVIDE(__data_abort_h = __exception_handler_Default);
 PROVIDE(__interrupt_h = __interrupt_handler_Default);
 PROVIDE(__fast_interrupt_h = __interrupt_handler_Default);
-
-
-
