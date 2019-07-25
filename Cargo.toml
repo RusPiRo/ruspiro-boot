@@ -6,8 +6,8 @@ description = ""
 license = ""
 repository = "https://github.com/RusPiRo/ruspiro-boot"
 readme = ""
-keywords = []
-categories = []
+keywords = ["ruspiro", "raspberry-pi", "boot"]
+categories = ["no-std"]
 edition = "2018"
 
 [lib]
