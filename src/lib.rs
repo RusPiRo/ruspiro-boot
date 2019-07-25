@@ -15,6 +15,9 @@
 //!
 //! 
 
+pub mod macros;
+pub use self::macros::*;
+
 // if we do activiate the feature "with_panic" the boot crate will provide default panic handler that does
 // hang the panicing core
 #[cfg(feature = "with_panic")]
@@ -22,6 +25,9 @@ mod panic;
 
 #[cfg(feature = "with_exception")]
 mod exception;
+
+// incorporate the stubs needed be the linker
+mod stubs;
 
 // including the assembly files
 global_asm!(include_str!("./asm/boot.s"));
