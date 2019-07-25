@@ -4,7 +4,7 @@
  * Author: André Borrmann 
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.0.1")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.1.0")]
 #![no_std]
 #![feature(asm)]        // needed to be able to use inline assembly
 #![feature(global_asm)] // needed to include and compile external assembly files
@@ -12,7 +12,37 @@
 
 //! # RusPiRo Boot crate
 //! This crates provides the startup routines that will be run from a baremetal kernel on the RaspberryPi.
-//!
+//! 
+//! # Usage
+//! To use this crate simple add it to the dependency list of your Cargo.toml file:
+//! ```
+//! [dependencies]
+//! ruspiro-boot = { git = 'https://github.com/RusPiRo/ruspiro-boot', features = ["with_panic", "with_exception"] }
+//! ```
+//! 
+//! and put this to your main rustfile of the binary that should be build:
+//! ```
+//! #[macro_use]
+//! extern crate ruspiro_boot;
+//! 
+//! come_alive_with!(alive);
+//! run_with!(running);
+//! 
+//! fn alive(core: u32) {
+//!     // do one-time initialization here
+//! }
+//! 
+//! fn running(core: u32) -> ! {
+//!     loop {
+//!         // do any processing here and ensure you never return from this function
+//!     }
+//! }
+//! ```
+//! As the boot routines provided by this crate depend on some external defined linker symbols the binary should always
+//! be linked with this [linker script](https://github.com/RusPiRo/ruspiro-boot/blob/master/link.ld)
+//! 
+//! The binary would not need any further dependencies to compile and link into a kernel image file that could be put
+//! onto a Raspberry Pi SD card and executed as baremetal kernel.
 //! 
 
 pub mod macros;
