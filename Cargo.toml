@@ -4,13 +4,12 @@ authors = ["André Borrmann <pspwizard@gmx.de>"]
 version = "0.0.1" # remember to update html_root_url
 description = ""
 license = ""
-repository = ""
+repository = "https://github.com/RusPiRo/ruspiro-boot"
 readme = ""
 keywords = []
 categories = []
 edition = "2018"
 
-# keep either bin or lib
 [lib]
 
 [dependencies]
