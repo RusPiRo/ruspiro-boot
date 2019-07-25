@@ -38,7 +38,8 @@ SECTIONS
 	/* fill the binary to always have an aligned binary size - needed for the bootloader on RPi to work properly */
 	.fill : {
 		FILL(0xDEADBEEF)
-		. = ALIGN(16) - 1;
+		. += 1;
+		. = ALIGN(32) - 1;
 		BYTE(0xAA) 
 	}
 

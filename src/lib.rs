@@ -8,10 +8,17 @@
 #![no_std]
 #![feature(asm)]        // needed to be able to use inline assembly
 #![feature(global_asm)] // needed to include and compile external assembly files
+#![feature(lang_items)]
 
 //! # RusPiRo Boot crate
 //! This crates provides the startup routines that will be run from a baremetal kernel on the RaspberryPi.
+//!
 //! 
+
+// if we do activiate the feature "with_panic" the boot crate will provide default panic handler that does
+// hang the panicing core
+#[cfg(feature = "with_panic")]
+mod panic;
 
 // including the assembly files
 global_asm!(include_str!("./asm/boot.s"));
