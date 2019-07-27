@@ -7,7 +7,7 @@ To use this crate simply add the following lines to your ``Cargo.toml`` file:
 (hint: git dependency as long as the crate is not registered at crates.io)
 ```
 [dependencies]
-ruspiro-boot = { git = 'https://github.com/RusPiRo/ruspiro-boot/tree/v0.0.1', features = ["with_panic", "with_exception"] }
+ruspiro-boot = { git = "https://github.com/RusPiRo/ruspiro-boot/", tag = "v0.0.1", features = ["with_panic", "with_exception"] }
 ```
 The feature ``with_panic`` will ensure that a default panic handler is implemented.
 The feature ``with_exception`` will ensure that a default exception and interrupt handler is implemented. However, if the interrupts are globally active with eg. ``cpsie i`` than the default interrupt handler will simply deactiviate the global interrupts as it cannot acknowledge the incomming interrupt which could lead to endless interrupt loops.

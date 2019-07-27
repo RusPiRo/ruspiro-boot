@@ -17,7 +17,7 @@
 //! To use this crate simple add it to the dependency list of your Cargo.toml file:
 //! ```
 //! [dependencies]
-//! ruspiro-boot = { git = 'https://github.com/RusPiRo/ruspiro-boot/tree/v0.0.1', features = ["with_panic", "with_exception"] }
+//! ruspiro-boot = { git = "https://github.com/RusPiRo/ruspiro-boot/", tag = "v0.0.1", features = ["with_panic", "with_exception"] }
 //! ```
 //! 
 //! and put this to your main rustfile of the binary that should be build:
