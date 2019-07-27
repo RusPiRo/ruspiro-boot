@@ -4,7 +4,7 @@
  * Author: André Borrmann 
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.0.1")]
 #![no_std]
 #![feature(asm)]        // needed to be able to use inline assembly
 #![feature(global_asm)] // needed to include and compile external assembly files
@@ -17,7 +17,7 @@
 //! To use this crate simple add it to the dependency list of your Cargo.toml file:
 //! ```
 //! [dependencies]
-//! ruspiro-boot = { git = 'https://github.com/RusPiRo/ruspiro-boot', features = ["with_panic", "with_exception"] }
+//! ruspiro-boot = { git = 'https://github.com/RusPiRo/ruspiro-boot/tree/v0.0.1', features = ["with_panic", "with_exception"] }
 //! ```
 //! 
 //! and put this to your main rustfile of the binary that should be build:
@@ -39,7 +39,7 @@
 //! }
 //! ```
 //! As the boot routines provided by this crate depend on some external defined linker symbols the binary should always
-//! be linked with this [linker script](https://github.com/RusPiRo/ruspiro-boot/blob/master/link.ld)
+//! be linked with this [linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.0.1/link.ld)
 //! 
 //! The binary would not need any further dependencies to compile and link into a kernel image file that could be put
 //! onto a Raspberry Pi SD card and executed as baremetal kernel.

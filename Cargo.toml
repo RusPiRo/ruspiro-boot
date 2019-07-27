@@ -1,12 +1,12 @@
 [package]
 name = "ruspiro-boot"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.1.0" # remember to update html_root_url
+version = "0.0.1" # remember to update html_root_url
 description = ""
 license = "LICENSE"
-repository = "https://github.com/RusPiRo/ruspiro-boot"
+repository = "https://github.com/RusPiRo/ruspiro-boot/tree/v.0.0.1"
 readme = "README.md"
-keywords = ["ruspiro", "raspberry-pi", "boot"]
+keywords = ["ruspiro", "raspberry-pi", "boot", "baremetal", "multicore"]
 categories = ["no-std"]
 edition = "2018"
 
