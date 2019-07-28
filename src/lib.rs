@@ -4,7 +4,7 @@
  * Author: André Borrmann 
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.0.1")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.0.2")]
 #![no_std]
 #![feature(asm)]        // needed to be able to use inline assembly
 #![feature(global_asm)] // needed to include and compile external assembly files
@@ -17,7 +17,7 @@
 //! To use this crate simple add it to the dependency list of your Cargo.toml file:
 //! ```
 //! [dependencies]
-//! ruspiro-boot = { git = "https://github.com/RusPiRo/ruspiro-boot/", tag = "v0.0.1", features = ["with_panic", "with_exception"] }
+//! ruspiro-boot = { git = "https://github.com/RusPiRo/ruspiro-boot/", tag = "v0.0.2", features = ["with_panic", "with_exception"] }
 //! ```
 //! 
 //! and put this to your main rustfile of the binary that should be build:

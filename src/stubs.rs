@@ -18,3 +18,9 @@ fn __aeabi_unwind_cpp_pr0() {
 fn __aeabi_unwind_cpp_pr1() {
     
 }
+
+#[no_mangle]
+#[allow(non_snake_case)]
+fn _Unwind_Resume() {
+
+}
