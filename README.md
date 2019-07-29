@@ -4,7 +4,7 @@ This crate provides basic boot code that - when build into a kernel crate - will
 
 ## Hint
 
-The usage of this crate does only make sense when building a Raspberry Pi 3 bare metal kernel. The crate has to be build with a custom target that provides the ``target_family=ruspiro-pi3`` setting.
+The usage of this crate does only make sense when building a Raspberry Pi 3 bare metal kernel. The crate has to be build with a custom target that provides the ``target_family=ruspiro-pi3`` setting. Without this, the crate is not much of a use -  the assembly for excample will not be compiled at all.
 
 ## Usage
 To use this crate simply add the following lines to your ``Cargo.toml`` file:

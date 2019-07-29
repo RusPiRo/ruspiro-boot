@@ -12,7 +12,7 @@
 
 /// Define a macro that enables easy setting of a custom entry point function to be used once the mandatory
 /// boot process has finished and the processing is handed over to the high level rust code. As each core will come
-/// come alive one after another, this function is called with the core it's running on. The next core comes alive
+/// come alive **one after another**, this function is called with the core it's running on. The next core comes alive
 /// after the actual one finished processing this function
 /// 
 /// # Example
@@ -37,9 +37,9 @@ macro_rules! come_alive_with {
     };
 }
 
-/// Define a macro that enables easy setting of a custom entry point function to be used once for the processing
-/// after all one-time initializations hav been done. This function is intended to never return and is executed
-/// on each core individually therefore this function is called with the core it's running on.
+/// Define a macro that enables easy setting of a custom entry point function to be used for the processing
+/// after all one-time initializations have been done. This function is intended to never return and is executed
+/// on each core individually. Therefore this function is called with the core number it's running on.
 /// 
 /// # Example
 /// 
