@@ -12,8 +12,6 @@
 //! However, having an default empty interrupt handler could cause endless interrupt loops as the appearing IRQ's will
 //! never beeing aknowledged this implementation just globally deactivates the interrupts.
 
-#[no_mangle]
-
 #[allow(non_snake_case)]
 #[no_mangle]
 fn __exception_handler_Default() -> ! {    

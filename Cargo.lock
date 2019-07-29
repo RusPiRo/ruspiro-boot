@@ -2,5 +2,5 @@
 # It is not intended for manual editing.
 [[package]]
 name = "ruspiro-boot"
-version = "0.0.1"
+version = "0.0.3"
 
