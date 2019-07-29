@@ -2,6 +2,10 @@
 
 This crate provides basic boot code that - when build into a kernel crate - will be executed as soon as the Raspberry Pi powers up. As the building of this crate and finally linking into the kernel image depends on several linker symbols to be present it is recommended to use the linker script provided when bulding the kernel.
 
+## Hint
+
+The usage of this crate does only make sense when building a Raspberry Pi 3 bare metal kernel. The crate has to be build with a custom target that provides the ``target_family=ruspiro-pi3`` setting.
+
 ## Usage
 To use this crate simply add the following lines to your ``Cargo.toml`` file:
 (hint: git dependency as long as the crate is not registered at crates.io)

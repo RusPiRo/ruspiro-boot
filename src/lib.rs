@@ -45,16 +45,20 @@ pub use self::macros::*;
 
 // if we do activiate the feature "with_panic" the boot crate will provide default panic handler that does
 // hang the panicing core
-#[cfg(feature = "with_panic")]
+#[cfg(all(target_family="ruspiro-pi3", feature = "with_panic"))]
 mod panic;
 
-#[cfg(feature = "with_exception")]
+#[cfg(all(target_family="ruspiro-pi3", feature = "with_exception"))]
 mod exception;
 
 // incorporate the stubs needed be the linker
+#[cfg(target_family="ruspiro-pi3")]
 mod stubs;
 
 // including the assembly files
+#[cfg(target_family="ruspiro-pi3")]
 global_asm!(include_str!("./asm/boot.s"));
+#[cfg(target_family="ruspiro-pi3")]
 global_asm!(include_str!("./asm/mmu.s"));
+#[cfg(target_family="ruspiro-pi3")]
 global_asm!(include_str!("./asm/irqtrampoline.s"));

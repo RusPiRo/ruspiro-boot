@@ -2,7 +2,7 @@
 name = "ruspiro-boot"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
 version = "0.0.3" # remember to update html_root_url
-description = ""
+description = "The crate provides baremetal boot code for the Raspberry Pi 3 to conviniently start your custom kernel within the Rust environment without the need to dangle with all the initial setup like stack pointers, getting MMU setup or getting all cores kicked off for processing."
 license = "Apache-2.0"
 repository = "https://github.com/RusPiRo/ruspiro-boot/tree/v.0.0.3"
 documentation = "https://docs.rs/ruspiro-boot/0.0.3"
