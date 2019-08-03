@@ -5,9 +5,9 @@ matrix:
   include:
     - rust: nightly
       env: 
-        TARGET=armv7-unknown-linux-gnueabihf
-        CFLAGS=-mfpu=neon-fp-armv8 -mfloat-abi=hard -march=armv8-a -Wall -O3 -nostartfiles -ffreestanding -mtune=cortex-a53
-        RUSTFLAGS=-C target-cpu=cortex-a53 -C target-feature=+a53,+fp-armv8,+v8,+vfp3,+d16,+thumb2,+neon
+        - TARGET=armv7-unknown-linux-gnueabihf
+        - CFLAGS='-mfpu=neon-fp-armv8 -mfloat-abi=hard -march=armv8-a -Wall -O3 -nostartfiles -ffreestanding -mtune=cortex-a53'
+        - RUSTFLAGS="-C target-cpu=cortex-a53 -C target-feature=+a53,+fp-armv8,+v8,+vfp3,+d16,+thumb2,+neon"
 
 script:
   cargo build --target armv7-unknown-linux-gnueabihf --verbose
