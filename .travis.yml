@@ -1,15 +1,17 @@
 language: rust
-rust:
-  - stable
-  - nightly
 
 matrix:
   fast_finish: true
   include:
-    - env: TARGET=armv7-unknown-linux-gnueabihf
+    - rust: nightly
+      env: 
+        TARGET=armv7-unknown-linux-gnueabihf
+        CFLAGS=-mfpu=neon-fp-armv8 -mfloat-abi=hard -march=armv8-a -Wall -O3 -nostartfiles -ffreestanding -mtune=cortex-a53
+        RUSTFLAGS=-C target-cpu=cortex-a53 -C target-feature=+a53,+fp-armv8,+v8,+vfp3,+d16,+thumb2,+neon
 
 script:
   cargo build --target armv7-unknown-linux-gnueabihf --verbose
 
 install:
+  sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
   rustup target add armv7-unknown-linux-gnueabihf
