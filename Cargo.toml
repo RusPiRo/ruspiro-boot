@@ -1,11 +1,11 @@
 [package]
 name = "ruspiro-boot"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.0.3" # remember to update html_root_url
+version = "0.1.0" # remember to update html_root_url
 description = "The crate provides baremetal boot code for the Raspberry Pi 3 to conviniently start your custom kernel within the Rust environment without the need to dangle with all the initial setup like stack pointers, getting MMU setup or getting all cores kicked off for processing."
 license = "Apache-2.0"
-repository = "https://github.com/RusPiRo/ruspiro-boot/tree/v.0.0.3"
-documentation = "https://docs.rs/ruspiro-boot/0.0.3"
+repository = "https://github.com/RusPiRo/ruspiro-boot/tree/v.0.1.0"
+documentation = "https://docs.rs/ruspiro-boot/0.1.0"
 readme = "README.md"
 keywords = ["RusPiRo", "raspberrypi", "boot", "baremetal", "multicore"]
 categories = ["no-std", "embedded"]
@@ -13,8 +13,13 @@ edition = "2018"
 
 [lib]
 
+[build-dependencies]
+cc = "1.0.38"
+
 [dependencies]
 
 [features]
+default = ["ruspiro_pi3"]
+ruspiro_pi3 = []
 with_panic = []
 with_exception = []

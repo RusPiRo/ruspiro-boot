@@ -41,7 +41,7 @@ SECTIONS
 	.fill : {
 		FILL(0xDEADBEEF)
 		. += 1;
-		. = ALIGN(32) - 1;
+		. = ALIGN(64) - 1;
 		BYTE(0xAA) 
 	}
 
