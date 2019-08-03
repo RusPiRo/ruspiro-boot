@@ -9,7 +9,7 @@ This crate provides basic boot code that - when build into a kernel crate - will
 
 ## Hint
 
-The usage of this crate does only make sense when building a Raspberry Pi 3 bare metal kernel. The crate has to be build with the feature ``ruspiro-pi3``. Without this, the crate might not compile properly or the binary build using this crate will not work as expected. Therfore this feature is activate by default.
+The usage of this crate does only make sense when building a Raspberry Pi 3 bare metal kernel. The crate has to be build with the feature ``ruspiro_pi3``. Without this, the crate might not compile properly or the binary build using this crate will not work as expected. Therfore this feature is activate by default.
 
 ## Usage
 To use this crate simply add the following lines to your ``Cargo.toml`` file:
