@@ -4,15 +4,16 @@ This crate provides basic boot code that - when build into a kernel crate - will
 
 ## Hint
 
-The usage of this crate does only make sense when building a Raspberry Pi 3 bare metal kernel. The crate has to be build with a custom target that provides the ``target_family=ruspiro-pi3`` setting. Without this, the crate is not much of a use -  the assembly for excample will not be compiled at all.
+The usage of this crate does only make sense when building a Raspberry Pi 3 bare metal kernel. The crate has to be build with the feature ``ruspiro-pi3``. Without this, the crate might not compile properly or the binary build using this crate will not work as expected.
 
 ## Usage
 To use this crate simply add the following lines to your ``Cargo.toml`` file:
 (hint: git dependency as long as the crate is not registered at crates.io)
 ```
 [dependencies]
-ruspiro-boot = { version = "0.0.3", features = ["with_panic", "with_exception"] }
+ruspiro-boot = { version = "0.1.0", features = ["rusprio-pi3", "with_panic", "with_exception"] }
 ```
+The feature ``ruspiro_pi3`` will ensure the specific code for the Raspberry Pi 3 will be compiled
 The feature ``with_panic`` will ensure that a default panic handler is implemented.
 The feature ``with_exception`` will ensure that a default exception and interrupt handler is implemented. However, if the interrupts are globaly active with eg. ``cpsie i`` than the default interrupt handler will simply deactiviate the global interrupts as it cannot acknowledge the incomming interrupt which could lead to endless interrupt loops.
 

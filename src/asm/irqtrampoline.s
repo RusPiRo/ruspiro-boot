@@ -10,6 +10,7 @@
 
 .global __exception_handler_Default
 .global __interrupt_handler_Default
+.global __irq_trampolines
 
  /****************************************************
   * quite a convinient way to define the IRQ table entries as

@@ -6,6 +6,8 @@
  * Author: André Borrmann
  * License: Apache License 2.0
  **********************************************************************************************************************/
+.global __invalidate_ttlb
+.global __setup_mmu
 
 /**********************************************************
  * setup the TTLB table at 0x4000
@@ -80,7 +82,7 @@ __setup_mmu:
 // get current CPUid
 	mrc		p15, 0, r3, c0, c0, 5		/* read MPIDR */
 	and     r3, r3, #3
-	cmp		r3, 0x0			// setup ttlb table entries only on core 0
+	cmp		r3, #0x0			// setup ttlb table entries only on core 0
 	bne		.ttlb_ready2
 	
 	bl		__setup_ttlb		// setup MMU translation table at 0x4000

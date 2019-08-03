@@ -177,7 +177,7 @@ __boot:
 // get current CPUid
 	mrc		p15, 0, r3, c0, c0, 5		/* read MPIDR */
 	and     r3, r3, #3
-	cmp		r3, 0x0					// bss init only need to be done on core0
+	cmp		r3, #0x0					// bss init only need to be done on core0
 	bne		.bss_done
 
 /******************************************************
@@ -208,14 +208,14 @@ __boot:
  ******************************************************/
 // get current CPUid
 	mrc		p15, 0, r0, c0, c0, 5		/* read MPIDR */
-	and     r0, r0, #3
-	cmp		r0, 0x3
+	and     r0, r0, #0x3
+	cmp		r0, #0x3
 	bge     .no_further_core // no further core need to be kicked off
 
 	ldr		r1, =__boot		// each core start at the same entry point
 	ldr		r2, =0x4000008C // inter core mailbox base address for core 0
-	mov     r4, 0x10		// core mailbox offset between cores
-	add     r3, r0, 1		// add 1 to the current core id to kick off the next one
+	mov     r4, #0x10		// core mailbox offset between cores
+	add     r3, r0, #0x1		// add 1 to the current core id to kick off the next one
 	mul		r3, r3, r4   	// core mailbox offset for the next core
 	str 	r1, [r2, r3]		// set start address of the next core
 	sev						// kick off next core as it was suspended with wfe

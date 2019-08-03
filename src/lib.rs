@@ -4,8 +4,9 @@
  * Author: André Borrmann 
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.0.3")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.1.0")]
 #![no_std]
+
 #![feature(asm)]        // needed to be able to use inline assembly
 #![feature(global_asm)] // needed to include and compile external assembly files
 #![feature(lang_items)]
@@ -34,7 +35,7 @@
 //! }
 //! ```
 //! As the boot routines provided by this crate depend on some external defined linker symbols the binary should always
-//! be linked with this [linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.0.3/link.ld)
+//! be linked with this [linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.1.0/link.ld)
 //! 
 //! The binary would not need any further dependencies to compile and link into a kernel image file that could be put
 //! onto a Raspberry Pi SD card and executed as baremetal kernel.
@@ -45,20 +46,11 @@ pub use self::macros::*;
 
 // if we do activiate the feature "with_panic" the boot crate will provide default panic handler that does
 // hang the panicing core
-#[cfg(all(target_family="ruspiro-pi3", feature = "with_panic"))]
+#[cfg(feature = "with_panic")]
 mod panic;
 
-#[cfg(all(target_family="ruspiro-pi3", feature = "with_exception"))]
+#[cfg(feature = "with_exception")]
 mod exception;
 
 // incorporate the stubs needed be the linker
-#[cfg(target_family="ruspiro-pi3")]
 mod stubs;
-
-// including the assembly files
-#[cfg(target_family="ruspiro-pi3")]
-global_asm!(include_str!("./asm/boot.s"));
-#[cfg(target_family="ruspiro-pi3")]
-global_asm!(include_str!("./asm/mmu.s"));
-#[cfg(target_family="ruspiro-pi3")]
-global_asm!(include_str!("./asm/irqtrampoline.s"));
