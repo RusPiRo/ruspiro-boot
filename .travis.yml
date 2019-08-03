@@ -7,4 +7,4 @@ matrix:
   fast_finish: true
 
 script:
-  cargo xbuild --target armv7-unknown-linux-gnueabihf --release --verbose
+  cargo build --target armv7-unknown-linux-gnueabihf --release --verbose
