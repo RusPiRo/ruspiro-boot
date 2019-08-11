@@ -16,14 +16,23 @@ fn main() {
     if build_pi3 {
         cc::Build::new()
             .file("src/asm/boot.s")
+            .flag("-march=armv8-a")
+            .flag("-mfpu=neon-fp-armv8")
+            .flag("-mfloat-abi=hard")
             .compile("boot");
 
         cc::Build::new()
             .file("src/asm/irqtrampoline.s")
+            .flag("-march=armv8-a")
+            .flag("-mfpu=neon-fp-armv8")
+            .flag("-mfloat-abi=hard")
             .compile("irqtrampoline");
         
         cc::Build::new()
             .file("src/asm/mmu.s")
+            .flag("-march=armv8-a")
+            .flag("-mfpu=neon-fp-armv8")
+            .flag("-mfloat-abi=hard")
             .compile("mmu");
     }
 }

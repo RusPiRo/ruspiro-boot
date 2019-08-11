@@ -6,6 +6,7 @@
  **********************************************************************************************************************/
 
 //! # Linker Stubs
+//! 
 //! The module provides stub implementations of functions needed by the linker even in baremetal environment. As
 //! the final binary is not intended to run a real OS those functions typically have no content.
 

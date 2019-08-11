@@ -10,18 +10,19 @@
 //! This module provides macros to ease the assignment of custom functions for the entypoints into the code provided by
 //! the consumer of this crate
 
-/// Define a macro that enables easy setting of a custom entry point function to be used once the mandatory
+/// Use this macro to define the your custom one-time-initialization entry point function to be used once the mandatory
 /// boot process has finished and the processing is handed over to the high level rust code. As each core will come
 /// come alive **one after another**, this function is called with the core it's running on. The next core comes alive
 /// after the actual one finished processing this function
 /// 
 /// # Example
-/// 
+/// ```
 /// come_alive_with!(my_init_once);
 /// 
 /// fn my_init_once(core: u32) {
 ///     // do any one-time initialization here....
 /// }
+/// ```
 /// 
 #[macro_export]
 macro_rules! come_alive_with {
@@ -37,17 +38,18 @@ macro_rules! come_alive_with {
     };
 }
 
-/// Define a macro that enables easy setting of a custom entry point function to be used for the processing
+/// Use this macro to define the never-returning processing entry point function to be used for the processing
 /// after all one-time initializations have been done. This function is intended to never return and is executed
 /// on each core individually. Therefore this function is called with the core number it's running on.
 /// 
 /// # Example
-/// 
+/// ```
 /// run_with!(my_processing);
 /// 
 /// fn my_processing(core: u32) -> ! {
-///     loop { } // safely hang here as we should never return. Real processing should go inside the loop.
+///     loop { } // safely hang here as we should never return.
 /// }
+/// ```
 /// 
 #[macro_export]
 macro_rules! run_with {
