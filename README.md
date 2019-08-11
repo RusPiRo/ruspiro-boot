@@ -16,7 +16,7 @@ To use this crate simply add the following lines to your ``Cargo.toml`` file:
 (hint: git dependency as long as the crate is not registered at crates.io)
 ```
 [dependencies]
-ruspiro-boot = { version = "0.1.0", features = ["with_panic", "with_exception"] }
+ruspiro-boot = { version = "0.1.1", features = ["with_panic", "with_exception"] }
 ```
 The feature ``ruspiro_pi3`` is active by default and need not to be passed
 The feature ``with_panic`` will ensure that a default panic handler is implemented.
@@ -24,19 +24,16 @@ The feature ``with_exception`` will ensure that a default exception and interrup
 
 To successfully link this crate it is **highly recomended** to use the linker script [link.ld](link.ld) for this step. This file defines all the necessary linker sections and symbols to allow this crate taking responsibility on the whole boot sequence of the Raspberry Pi in 32bit baremetal mode.
 
-To refer to the linker script create a ``.cargo`` folder in your project root and add a file named ``config`` (without any file extension) to it. The file content shall be as follows:
+To refer to the linker script either pass a ``RUSTFLAG`` parameter ``-C link-arg=-T<path_to_the_link_file>/link.ld`` to your build or create a ``.cargo`` folder in your project root and add a file named ``config`` (without any file extension) to it. Add the following ``link-arg`` parameter to the file.
 ```
 [target.armv7-unknown-linux-gnueabihf]
-linker = "arm-eabi-gcc"
 rustflags = [
     "-C", "link-arg=-T<path_to_the_link_file>/link.ld",
-    "-C", "target-cpu=cortex-a53",
-    "-C", "target-feature=+a53,+fp-armv8,+v8,+vfp3,+d16,+thumb2,+neon",
-    "-C", "opt-level=3",
-    "-C", "debuginfo=0"
 ]
 ```
 Just replace the ``<path_to_the_link_file>`` with the path where you stored the linker script file of this crate.
+When working with the [``ruspiro-sdk``](https://github.com/RusPiRo/ruspiro-sdk) you may want to check the different example
+Scenarios where this crates is used and how it is successfully build using a make file.
 
 
 ## License
