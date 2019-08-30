@@ -21,6 +21,7 @@ ruspiro-boot = { version = "0.2", features = ["with_panic", "with_exception"] }
 The feature ``ruspiro_pi3`` is active by default and need not to be passed
 The feature ``with_panic`` will ensure that a default panic handler is implemented.
 The feature ``with_exception`` will ensure that a default exception and interrupt handler is implemented. However, if the interrupts are globaly active with eg. ``cpsie i`` than the default interrupt handler will simply deactiviate the global interrupts as it cannot acknowledge the incomming interrupt which could lead to endless interrupt loops.
+The feature ``singlecore`` will keep all cores except one in a "parked" state so the runtime only uses a single core.
 
 To successfully link this crate it is **highly recomended** to use the linker script [link.ld](link.ld) for this step. This file defines all the necessary linker sections and symbols to allow this crate taking responsibility on the whole boot sequence of the Raspberry Pi in 32bit baremetal mode.
 
