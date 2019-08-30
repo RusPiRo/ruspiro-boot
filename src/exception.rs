@@ -23,6 +23,6 @@ fn __exception_handler_Default() -> ! {
 #[no_mangle]
 fn __interrupt_handler_Default() {
     // deactivate global interrupts as empty handling may cause endless IRQ loops
-    #[cfg(feature="ruspiro_pi3")]
+    #[cfg(target_arch="arm")]
     unsafe { asm!("cpsid i") };
 }

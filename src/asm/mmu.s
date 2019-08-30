@@ -18,11 +18,11 @@ __setup_ttlb:             // N   A
 	ldr		r0, =0x4000  // S0G X   AP DOMN C
 	mov		r1, #0x0     // 1  S1TEX1 P    X B10
 	                     // 9   5   1  8  5 3  0
-//ldr		r2, =0x90C0E // 10010000110000001110 --> shareable, outer/inner write back no allocate
-//ldr		r2, =0x90C0A     // 10010000110000001010 --> shareable, outer/inner write through no allocate on write
-//    ldr	r2, =0x91C0E // 10010001110000001110 --> shareable, outer/inner write back, allocate on write
-//ldr		r2, =0x91C02 // 10010001110000000010 --> (normal, outer/inner non cacheable, shared)	
-	ldr     r2,          =0b00000000110000011110 //--> shareable, outer/inner write back, allocate on write
+///////ldr		r2, =0x90C0E // 10010000110000001110 --> shareable, outer/inner write back no allocate
+///////ldr		r2, =0x90C0A     // 10010000110000001010 --> shareable, outer/inner write through no allocate on write
+///////ldr		r2, =0x91C02 // 10010001110000000010 --> (normal, outer/inner non cacheable, shared)	
+    ldr	r2,              =0b10010001110000001110 // --> shareable, outer/inner write back, allocate on write
+  //ldr     r2,          =0b00000000110000011110 // --> shareable, outer/inner write back, allocate on write
 	ldr		r4, =0x4FC0
 
 .loop1:						// write 4096 entries to MMUTable

@@ -23,22 +23,13 @@ all:
 # update dependend crates to their latest version if any
 	cargo update
 # cross compile the crate
-	cargo xbuild --target $(TARGET) --release
+	cargo xbuild --lib --target $(TARGET) --release
 
 doc:
 	# update dependend crates to their latest version if any
 	cargo update
 	# build docu for this crate using custom target
-	xargo doc --all --no-deps --target $(TARGET) --release --open
+	xargo doc --lib --no-deps --target $(TARGET) --release --open
 	
-test:
-	xargo test --doc --target $(TARGET)
-
-publish-dry-run:
-	xargo publish --dry-run --target $(TARGET)
-
-publish:
-	xargo publish --target $(TARGET)
-
 clean:
 	cargo clean
