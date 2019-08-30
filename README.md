@@ -16,7 +16,7 @@ To use this crate simply add the following lines to your ``Cargo.toml`` file:
 (hint: git dependency as long as the crate is not registered at crates.io)
 ```
 [dependencies]
-ruspiro-boot = { version = "0.1.1", features = ["with_panic", "with_exception"] }
+ruspiro-boot = { version = "0.2", features = ["with_panic", "with_exception"] }
 ```
 The feature ``ruspiro_pi3`` is active by default and need not to be passed
 The feature ``with_panic`` will ensure that a default panic handler is implemented.
