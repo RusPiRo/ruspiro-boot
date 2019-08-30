@@ -24,7 +24,7 @@ fn main() {
 
                 // allow to choose: boot only single core 0 or all 4 cores ?
                 // the boot code differs a small bit...
-                let build_singlecore = env::var_os("CARGO_FEATURE_RUSPIRO_SINGLECORE").is_some();
+                let build_singlecore = env::var_os("CARGO_FEATURE_SINGLECORE").is_some();
                 if build_singlecore {
                     cc::Build::new()
                         .file("src/asm/run_single.s")

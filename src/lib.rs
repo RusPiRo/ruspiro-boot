@@ -43,6 +43,7 @@
 //! - ``ruspiro_pi3`` is active by default and need not to be passed. This ensures proper building of the boot assembly.
 //! - ``with_panic`` will ensure that a default panic handler is implemented.
 //! - ``with_exception`` will ensure that a default exception and interrupt handler is implemented.
+//! - ``singlecore`` enforces the compilition of the single core boot sequence. Only the main core 0 is then running.
 //! 
 
 
