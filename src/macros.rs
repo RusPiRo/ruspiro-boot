@@ -28,10 +28,10 @@
 macro_rules! come_alive_with {
     // macro used with a path given to it matches this branch
     ($path:path) => {
-        // in this case the macro expends to an library export symbol called __come_alive
+        // in this case the macro expends to an library export symbol called __kernel_startup
         // this function is called from the boot up sequence
-        #[export_name = "__come_alive"]
-        pub unsafe fn __entry(core: u32)  {
+        #[export_name = "__kernel_startup"]
+        pub fn __entry(core: u32)  {
             let entry_f: fn(u32) = $path;
             entry_f(core);            
         }
@@ -55,10 +55,10 @@ macro_rules! come_alive_with {
 macro_rules! run_with {
     // macro used with a path given to it matches this branch
     ($path:path) => {
-        // in this case the macro expends to an library export symbol called __run
+        // in this case the macro expends to an library export symbol called __kernel_run
         // this function is called from the boot up sequence
-        #[export_name = "__run"]
-        pub unsafe fn __run_loop(core: u32)  {
+        #[export_name = "__kernel_run"]
+        pub fn __run_loop(core: u32)  {
             let run_f: fn(u32) -> ! = $path;
             run_f(core);            
         }

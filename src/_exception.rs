@@ -25,4 +25,6 @@ fn __interrupt_handler_Default() {
     // deactivate global interrupts as empty handling may cause endless IRQ loops
     #[cfg(target_arch="arm")]
     unsafe { asm!("cpsid i") };
+    #[cfg(target_arch="aarch64")]
+    unsafe { asm!("msr daifset, #0x7") };
 }

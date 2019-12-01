@@ -1,8 +1,9 @@
 /***********************************************************************************************************************
  * core boot code once the raspberry pi has powered.
  * The bootcode.bin ensures that all cores except core 0 is parked and the core 0 will be kicked off
- * executiung code at start adress 0x800
- * Thus the entrypoint "__boot" need to link at adress 0x800 when the rubo is build and linked into the kernel7.img file
+ * executiung code at start adress 0x8000
+ * Thus the entrypoint "__boot" need to link at adress 0x8000 when RusPiRo is build and linked into the
+ * kernel7.img file
  *
  * Copyright (c) 2019 by the authors
  *
@@ -202,6 +203,7 @@ __boot:
  * savely hang the CPU here
  ******************************************************/
 __hang:
+	wfe
 	b	__hang
 
 

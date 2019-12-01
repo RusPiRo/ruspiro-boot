@@ -24,6 +24,6 @@ __rust_entry:
 	// get current CPUid to pass it to the entry function
 	mrc		p15, 0, r0, c0, c0, 5		/* read MPIDR */
 	and     r0, r0, #3
-	b 		__run				// this usually never returns! r0 = current core id passed along
-	bl		__hang
+	b 		__run	// this usually never returns! r0 = current core id passed along
+	b		__hang	// but for safety hang the core here
 
