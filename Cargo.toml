@@ -28,8 +28,10 @@ cc = "1.0.38"
 
 [dependencies]
 ruspiro-register = { path = "../register", version = "0.3" }
+ruspiro-gpio = { path = "../gpio", version = "0.3" }
 ruspiro-interrupt = { path = "../interrupt", version = "0.3" }
-ruspiro-uart = { path = "../uart", version = "0.3"}
+ruspiro-uart = { path = "../uart", version = "0.3" }
+ruspiro-timer = { path = "../timer", version = "0.3" }
 
 [features]
 default = ["ruspiro_pi3"]

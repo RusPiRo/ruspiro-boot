@@ -27,7 +27,7 @@
 .section .text.boot
 __boot:
     // the very first thing to do is to setup the stack pointer.
-    mrs 	x0, mpidr_el1   // get CPU id to calculate core distinct stack pointers
+    mrs 	x0, mpidr_el1   // get core id to calculate core distinct stack pointers
     and 	x0, x0, #3
     
     ldr		x1,=__stack_top_core0__
@@ -63,6 +63,7 @@ __boot:
     // all exceptions into the handler written in Rust code
     adr     x0, __ExceptionVectorTable
     msr     vbar_el2, x0
+    msr     vbar_el1, x0    // EL2 and EL1 share the same exception vector table
     // after maintaining the exception vector table ensure exceptions are routed to EL2
     // as they usually are routet to EL1, but we keep running in EL2
     mrs     x0, hcr_el2

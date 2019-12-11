@@ -7,6 +7,7 @@
 
 //! # MMU maintenance
 //!
+
 use ruspiro_register::system::*;
 
 #[repr(align(4096))]
@@ -23,22 +24,45 @@ static mut MMU_CFG: MmuConfig = MmuConfig {
 };
 
 pub fn initialize_mmu(core: u32) {
+    // the mmu configuration depents on the exception level we are running in
+    let el = currentel::read(currentel::el::Field).value();
+
+    // disable MMU before changing any settings and re-activating
+    match el {
+        1 => disable_mmu_el1(),
+        2 => disable_mmu_el2(),
+        _ => unimplemented!(),
+    }
+
     // setup ttlb entries - this is only needed once on the main core
     // as all cores share the same physical memory
     if core == 0 {
         setup_page_tables();
     }
 
-    // the mmu configuration depents on the exception level we are running in
-    let el = currentel::read(currentel::el::Field).value();
     match el {
-        1 => initialize_mmu_el1(core),
-        2 => initialize_mmu_el2(core),
-        _ => (),
+        1 => initialize_mmu_el1(),
+        2 => initialize_mmu_el2(),
+        _ => unimplemented!(),
     }
 }
 
-fn initialize_mmu_el1(_core: u32) {
+pub fn disable_mmu() {
+    // the mmu configuration depents on the exception level we are running in
+    let el = currentel::read(currentel::el::Field).value();
+    match el {
+        1 => disable_mmu_el1(),
+        2 => disable_mmu_el2(),
+        _ => unimplemented!(),
+    }
+    // let 2 cycles pass with a nop to settle the MMU after disabling
+    nop();
+    nop();
+    dsb();
+    isb();
+}
+
+fn initialize_mmu_el1() {
     // configure the MAIR (memory attribute) variations we will support
     // those entries are referred to as index in the memeory attributes of the
     // table entries
@@ -47,7 +71,7 @@ fn initialize_mmu_el1(_core: u32) {
             | mair_el1::MAIR1::NGNRE
             | mair_el1::MAIR2::GRE
             | mair_el1::MAIR3::NC
-            | mair_el1::MAIR4::NORM
+            | mair_el1::MAIR4::NORM,
     );
 
     // set the ttlb base address, this is where the memory address translation
@@ -62,7 +86,7 @@ fn initialize_mmu_el1(_core: u32) {
             | tcr_el1::IRGN0::NM_IWB_RA_WA
             | tcr_el1::ORGN0::NM_OWB_RA_WA
             | tcr_el1::SH0::IS
-            | tcr_el1::TG0::_4KB          
+            | tcr_el1::TG0::_4KB
             | tcr_el1::T1SZ::with_value(25)
             | tcr_el1::EPD1::DISABLE
             | tcr_el1::IRGN1::NM_IWB_RA_WA
@@ -70,7 +94,7 @@ fn initialize_mmu_el1(_core: u32) {
             | tcr_el1::SH1::IS
             | tcr_el1::TG1::_4KB
             | tcr_el1::IPS::_32BITS
-            | tcr_el1::TBI0::IGNORE
+            | tcr_el1::TBI0::IGNORE,
     );
 
     // set the SCTRL_EL1 to activate the MMU
@@ -79,7 +103,7 @@ fn initialize_mmu_el1(_core: u32) {
             | sctlr_el1::A::DISABLE
             | sctlr_el1::C::ENABLE
             | sctlr_el1::SA::DISABLE
-            | sctlr_el1::I::ENABLE
+            | sctlr_el1::I::ENABLE,
     );
 
     // let 2 cycles pass with a nop to settle the MMU
@@ -87,7 +111,11 @@ fn initialize_mmu_el1(_core: u32) {
     nop();
 }
 
-fn initialize_mmu_el2(_core: u32) {
+fn disable_mmu_el1() {
+    sctlr_el1::write(sctlr_el1::M::DISABLE | sctlr_el1::C::DISABLE | sctlr_el1::I::DISABLE);
+}
+
+fn initialize_mmu_el2() {
     // configure the MAIR (memory attribute) variations we will support
     // those entries are referred to as index in the memeory attributes of the
     // table entries
@@ -96,7 +124,7 @@ fn initialize_mmu_el2(_core: u32) {
             | mair_el2::MAIR1::NGNRE
             | mair_el2::MAIR2::GRE
             | mair_el2::MAIR3::NC
-            | mair_el2::MAIR4::NORM
+            | mair_el2::MAIR4::NORM,
     );
 
     // set the ttlb base address, this is where the memory address translation
@@ -112,7 +140,7 @@ fn initialize_mmu_el2(_core: u32) {
             | tcr_el2::SH0::IS
             | tcr_el2::TG0::_4KB
             | tcr_el2::PS::_32BITS
-            | tcr_el2::TBI::IGNORE
+            | tcr_el2::TBI::IGNORE,
     );
 
     hcr_el2::write(hcr_el2::DC::DISABLE | hcr_el2::VM::DISABLE);
@@ -123,12 +151,16 @@ fn initialize_mmu_el2(_core: u32) {
             | sctlr_el2::A::DISABLE
             | sctlr_el2::C::ENABLE
             | sctlr_el2::SA::DISABLE
-            | sctlr_el2::I::ENABLE
+            | sctlr_el2::I::ENABLE,
     );
 
     // let 2 cycles pass with a nop to settle the MMU
     nop();
     nop();
+}
+
+fn disable_mmu_el2() {
+    sctlr_el2::write(sctlr_el2::M::DISABLE | sctlr_el2::C::DISABLE | sctlr_el2::I::DISABLE);
 }
 
 /// # Safety
