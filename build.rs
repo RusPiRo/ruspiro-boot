@@ -13,11 +13,7 @@ use std::env;
 
 fn main() {
     let script_location = env::current_dir().unwrap();
-    println!(
-        "cargo:linkerscript={}\\link64.ld",
-        script_location.display()
-    );
-
+    
     match env::var_os("CARGO_CFG_TARGET_ARCH") {
         Some(target_arch) => {
             if env::var_os("CARGO_FEATURE_RUSPIRO_PI3").is_some() {
@@ -30,6 +26,11 @@ fn main() {
                         .file("src/asm/aarch32/exceptionvector.S")
                         .flag("-march=armv8-a")
                         .compile("excvector");
+                    // print the linker file location of the boot crate to the env-variables
+                    println!(
+                        "cargo:linkerscript={}\\link32.ld",
+                        script_location.display()
+                    );
                     /*
                     cc::Build::new()
                         .file("src/asm/aarch32/boot.s")
@@ -82,7 +83,11 @@ fn main() {
                         .file("src/asm/aarch64/exceptionvector.S")
                         .flag("-march=armv8-a")
                         .compile("excvector");
-
+                    // print the linker file location of the boot crate to the env-variables
+                    println!(
+                        "cargo:linkerscript={}\\link64.ld",
+                        script_location.display()
+                    );
                     /*
                         cc::Build::new()
                             .file("src/asm/aarch64/boot.s")

@@ -9,7 +9,6 @@
 //!
 
 use ruspiro_register::system::*;
-use ruspiro_gpio::debug::*;
 
 #[repr(align(0x4000))]
 struct MmuConfig {
@@ -18,8 +17,6 @@ struct MmuConfig {
 
 /// translation table in aarch32
 static mut MMU_CFG: MmuConfig = MmuConfig { ttlb: [0; 4096] };
-
-const TTBASE: u32 = 0x4000;
 
 pub fn initialize_mmu(core: u32) {
     // disbale the MMU before changing any configuration settings

@@ -9,6 +9,8 @@
  **************************************************************************************************/
 .global __ExceptionVectorTable
 
+// specify the constants used to passed to the generic exception handler to identify
+// the type and context of the exception raised
 .equ EXC_CURREL_SP0_Sync,   0x1
 .equ EXC_CURREL_SP0_Irq,    0x2
 .equ EXC_CURREL_SP0_Fiq,    0x3
@@ -49,9 +51,9 @@
 	stp		x28, x29, [sp, #16 * 14]
 	str     x30, [sp, #16 * 15]
 
-	// stack SPSR_EL2 and ELR_EL2
-	mrs		x10, spsr_el2
-	mrs		x11, elr_el2
+	// stack SPSR_EL1 and ELR_EL1
+	mrs		x10, spsr_el1
+	mrs		x11, elr_el1
 	stp     x10, x11, [sp, #16 * 16]
 
 .endm
@@ -77,18 +79,17 @@
 	ldp		x28, x29, [sp, #16 * 14]
 	ldr     x30, [sp, #16 * 15]
 
-	// restore SPSR_EL2 and ELR_EL2
+	// restore SPSR_EL1 and ELR_EL1
 	ldp		x10, x11, [sp, #16 * 16]
-	msr     elr_el2, x11
-	msr     spsr_el2, x10
+	msr     elr_el1, x11
+	msr     spsr_el1, x10
 
 	add		sp, sp, #256 // free the stack as it is no longer needed
 .endm
 
 /***************************************************************************************************
  * default exception handler that does nothing for the time beeing
- * TODO: id a default sync excpetion handler needed to indicate data aborts
- *       and/or software exceptions ?
+ * parameter passed: type, esr, spsr, far, elr
  **************************************************************************************************/
 .weak __exception_handler_default
 __exception_handler_default:
@@ -103,11 +104,11 @@ __exception_trampoline:
     // before handling an exception save the current register states to the stack
     save_state
     // reading the context of the current exception to be passed to the handler
-    // we assume this is taken in EL2 - therfore hardcode the respective registers
-    mrs     x1, esr_el2
-    mrs     x2, spsr_el2
-    mrs     x3, far_el2
-    mrs     x4, elr_el2
+    // we assume this is taken in EL1 - therfore hardcode the respective registers
+    mrs     x1, esr_el1
+    mrs     x2, spsr_el1
+    mrs     x3, far_el1
+    mrs     x4, elr_el1
 
     // branch to the default exception handler
     // if not implemented somewhere else the default implementeation provided here will

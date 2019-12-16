@@ -8,7 +8,6 @@
  * 2. The bootcode.bin/start.elf have parked the other cores of the CPU
  * 3. The current core is entering this code in HYP
  * 4. The start address of the entry point is 0x8000 which has to be ensured by the linker script
- * 5. The linker script also provides at least the following symbols:
  *
  *
  * Copyright (c) 2019 by the authors
@@ -42,56 +41,6 @@
  **************************************************************************************************/
 .section .text.boot
 __boot:
-
-
-/******************************************************
- * as we are now in the desired mode (SVC) we can switch
- * to each mode and set the necessary stack pointers
- ******************************************************/
-/*
-	ldr		sp,=__stack_top_SVC__		// load stackpointer for SVC mode
-	sub		sp, sp, r2
-	
-	mrs 	r1, cpsr					// Fetch the cpsr register which includes CPU mode bits
-	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
-	orr 	r1, r1, #ARM_MODE_FIQ		// FIQ_MODE bits onto register with Irq/Fiq disabled
-    msr 	CPSR_c, r1					// Switch to FIQ_MODE
-	ldr		sp,=__stack_top_FIQ__		// Set the stack pointer for FIQ_MODE
-	sub     sp, sp, r2
-	
-	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
-	orr 	r1, r1, #ARM_MODE_IRQ		// IRQ_MODE bits onto register with Irq/Fiq disabled
-    msr 	CPSR_c, r1					// Switch to IRQ_MODE
-    ldr		sp,=__stack_top_IRQ__		// Set the stack pointer for IRQ_MODE
-    sub     sp, sp, r2
-
-	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
-	orr 	r1, r1, #ARM_MODE_ABT		// IRQ_MODE bits onto register with Irq/Fiq disabled
-    msr 	CPSR_c, r1					// Switch to ABT_MODE
-    ldr		sp,=__stack_top_ABT__       // Set the stack pointer for IRQ_MODE
-	sub     sp, sp, r2
-    
-	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
-	orr 	r1, r1, #ARM_MODE_SYS		// SYS_MODE bits onto register with Irq/Fiq disabled
-    msr 	CPSR_c, r1					// Switch to SYS_MODE
-    ldr		sp,=__stack_top_SYS__		// Set the stack pointer for IRQ_MODE
-	sub     sp, sp, r2
-    
-	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
-	orr 	r1, r1, #ARM_MODE_UND		// UND_MODE bits onto register with Irq/Fiq disabled
-    msr 	CPSR_c, r1					// Switch to UND_MODE
-    ldr		sp,=__stack_top_UND__		// Set the stack pointer for ABORT_MODE
-	sub     sp, sp, r2
-    
-	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
-	orr 	r1, r1, #ARM_MODE_SVC		// SVC_MODE bits onto register with Irq/Fiq disabled
-    msr 	CPSR_c, r1					// Switch to SVC_MODE again all stacks ready to go
-	
-	dsb
-	isb
-*/
-
-
     // the very first thing to do is to setup the stack pointer
     mrc     p15, 0, r0, c0, c0, 5   // get core id to calculate distinct stack pointer
     and     r0, r0, #3
@@ -124,8 +73,13 @@ __boot:
 	blt		.bss_zero_loop
 
 .bss_done:
+	// next step will switch from HYP to SVC mode which will be the one the kernel will be executed at
+	bl      __switch_hyp_to_svc
 
-    // if the BSS section has been cleared setup exception vector table
+    // next we setup the exception vector table that will act as a trampoline for
+    // all exceptions into the handler written in Rust code
+    ldr		r0, =__ExceptionVectorTable
+	mcr     p15, 0, r0, c12, c0, 0
 
     // as rust compiler optimizations quite likely result in FP/NEON instructions
     // ensure they are not trapped
@@ -145,12 +99,12 @@ __boot:
     // safely hang this core
     b   __hang
 
-
+/***************************************************************************************************
+ * switch the current execution mode from HYP mode to SVC mode
+ **************************************************************************************************/
 .global __switch_hyp_to_svc
 __switch_hyp_to_svc:
-/*****************************************************
- * switch from HYP mode to SVC mode
- *****************************************************/
+
 	mov     r10, lr						// remeber return address
  	mrs 	r0, cpsr					// Get the CPSR
  	eor 	r0, r0, #ARM_MODE_HYP		// 
@@ -184,6 +138,43 @@ __switch_hyp_to_svc:
     ldr		r3,=__stack_top_SVC__
 	sub		sp, r3, r2
 
+	// once the initial stack pointer has been set also set the stackpointers for the different
+	// execution modes FIQ, IRQ, ABT, SYS, UND
+	mrs 	r1, cpsr					// Fetch the cpsr register which includes CPU mode bits
+	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
+	orr 	r1, r1, #ARM_MODE_FIQ		// FIQ_MODE bits onto register with Irq/Fiq disabled
+    msr 	CPSR_c, r1					// Switch to FIQ_MODE
+	ldr		sp,=__stack_top_FIQ__		// Set the stack pointer for FIQ_MODE
+	sub     sp, sp, r2					// adjust with core specific offset
+	
+	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
+	orr 	r1, r1, #ARM_MODE_IRQ		// IRQ_MODE bits onto register with Irq/Fiq disabled
+    msr 	CPSR_c, r1					// Switch to IRQ_MODE
+    ldr		sp,=__stack_top_IRQ__		// Set the stack pointer for IRQ_MODE
+    sub     sp, sp, r2					// adjust with core specific offset
+
+	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
+	orr 	r1, r1, #ARM_MODE_ABT		// IRQ_MODE bits onto register with Irq/Fiq disabled
+    msr 	CPSR_c, r1					// Switch to ABT_MODE
+    ldr		sp,=__stack_top_ABT__       // Set the stack pointer for IRQ_MODE
+	sub     sp, sp, r2					// adjust with core specific offset
+    
+	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
+	orr 	r1, r1, #ARM_MODE_SYS		// SYS_MODE bits onto register with Irq/Fiq disabled
+    msr 	CPSR_c, r1					// Switch to SYS_MODE
+    ldr		sp,=__stack_top_SYS__		// Set the stack pointer for IRQ_MODE
+	sub     sp, sp, r2					// adjust with core specific offset
+    
+	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
+	orr 	r1, r1, #ARM_MODE_UND		// UND_MODE bits onto register with Irq/Fiq disabled
+    msr 	CPSR_c, r1					// Switch to UND_MODE
+    ldr		sp,=__stack_top_UND__		// Set the stack pointer for ABORT_MODE
+	sub     sp, sp, r2					// adjust with core specific offset
+    
+	bic 	r1, r1, #0x1F				// Clear the CPU mode bits in register r0
+	orr 	r1, r1, #ARM_MODE_SVC		// SVC_MODE bits onto register with Irq/Fiq disabled
+    msr 	CPSR_c, r1					// Switch to SVC_MODE again all stacks ready to go
+
 	bx      r10			// return to the caller beeing in SVC now
 
 /***************************************************************************************************
@@ -196,3 +187,27 @@ __switch_hyp_to_svc:
  __hang:
     wfe
     b   __hang
+
+
+/****************************************************************************
+ ****************************************************************************/
+__entry32:
+    // get current CPUid to pass it to the entry function
+	mrc		p15, 0, r0, c0, c0, 5		/* read MPIDR */
+	and     r0, r0, #3
+
+	lsl     r1, r0, #3
+    mov     r4, #0
+	mov     r5, #0
+	mov     r3, #0xd8
+    strd    r4, r5, [r3, r1]
+
+    ldr     r1, =0x400000CC // core 0 mailbox 3 set
+
+.park32:
+    wfe
+    ldr     r2, [r1, r0, lsl #4] // read core specific mailbox
+    cmp     r2, #0
+    beq     .park32
+	str     r2, [r1, r0, lsl #4] // clear mailbox by writing to it
+    bx      r2

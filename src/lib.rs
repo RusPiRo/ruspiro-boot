@@ -6,7 +6,7 @@
  **********************************************************************************************************************/
 #![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.3.0")]
 #![no_std]
-#![feature(asm, lang_items)]
+#![feature(asm, lang_items, linkage)]
 
 //! # RusPiRo Boot Strapping
 //!
@@ -19,7 +19,7 @@ mod mmu64;
 #[cfg(target_arch = "aarch64")]
 use mmu64 as mmu;
 
-mod exceptionlevel;
+//mod exceptionlevel;
 
 #[cfg(target_arch = "arm")]
 mod mmu32;
@@ -27,28 +27,28 @@ mod mmu32;
 use mmu32 as mmu;
 
 mod panic;
+mod stubs;
 
 use ruspiro_interrupt::IRQ_MANAGER;
 use ruspiro_timer as timer;
 use ruspiro_uart::Uart1;
+use ruspiro_cache as cache;
 
 use ruspiro_gpio::debug::lit_debug_led;
+
+extern "C" {
+    fn __kernel_startup(core: u32);
+    fn __kernel_run(core: u32) -> !;
+}
 
 /// Entry point that is called by the bootstrapping code.
 /// From here we will branch into the kernel code provided by the user of this crate.
 /// To conviniently provide those entry points the crate user should use the respective macros
-/// `come_alive_with!` and `run_with!`
+/// `come_alive_with!` and `run_with!`. This entry point is assumed to be always called
+/// in EL1(aarch64) or SVC(aarch32) mode
 ///
 #[export_name = "__rust_entry"]
 fn __rust_entry(core: u32) -> ! {
-    // entering here we are typically in EL2, a kernel shall always run at EL1. So perform
-    // the exception level switch to EL1 by properly return from EL2
-    #[cfg(target_arch = "aarch64")]
-    exceptionlevel::switch_to_el1();
-
-    #[cfg(target_arch = "arm")]
-    exceptionlevel::switch_to_svc();
-
     // very first thing is to setup the MMU which allows us to
     // use atomic operations in the upcomming initialization
     mmu::initialize_mmu(core);
@@ -61,7 +61,7 @@ fn __rust_entry(core: u32) -> ! {
         let mut uart = Uart1::new();
         
         let _ = uart.initialize(250_000_000, 115_200);
-        //unsafe { lit_debug_led(21); }
+        
         #[cfg(target_arch = "aarch64")]
         uart.send_string(
             "\r\n########## RusPiRo ----- Bootstrapper v0.3 @ Aarch64 ----- ##########\r\n",
@@ -81,34 +81,42 @@ fn __rust_entry(core: u32) -> ! {
     }
 
     // now follows the configuration that is needed to be done by all cores
-
+    // TODO: is there something we need to prepare ?
+    
     // now that the initialization was done we can jump into the "application"
     // specific initialization
-    extern "C" {
-        fn __kernel_startup(core: u32);
-    }
-    unsafe {
-        __kernel_startup(core);
-    }
-
+    unsafe { __kernel_startup(core) };
+    
     // once the one-time startup of this core has been done kickoff any other core
     #[cfg(not(feature = "singlecore"))]
     kickoff_next_core(core);
 
     // after the one time setup of the "application" enter the processing loop
-    extern "C" {
-        fn __kernel_run(core: u32) -> !;
-    }
+    unsafe { __kernel_run(core) };
+}
+
+extern "C" {
+    fn __boot();
+}
+
+#[cfg(all(target_arch = "arm", not(feature = "singlecore")))]
+fn kickoff_next_core(core: u32) {
+    // kicking of another core in arch32 means, writing the jump address for this
+    // core into it's specific mailbox
+    let jump_store: u64 = match core {
+        0 => 0x4000_009C, // write start address to core 1 mailbox 3
+        1 => 0x4000_00AC, // write start address to core 2 mailbox 3
+        2 => 0x4000_00BC, // write start address to core 3 mailbox 3
+        _ => return,
+    };
     unsafe {
-        __kernel_run(core);
+        core::ptr::write_volatile(jump_store as *mut u32, __boot as *const () as u32);
+        asm!("sev"); // trigger an event to wake up the sleeping cores
     }
 }
 
-#[cfg(target_arch = "aarch64")]
+#[cfg(all(target_arch = "aarch64", not(feature = "singlecore")))]
 fn kickoff_next_core(core: u32) {
-    extern "C" {
-        fn __boot();
-    }
     // kicking of another core in arch64 means, writing the jump address for this
     // core into a specific memory location
     let jump_store: u64 = match core {
@@ -118,7 +126,10 @@ fn kickoff_next_core(core: u32) {
         _ => return,
     };
     unsafe {
-        core::ptr::write_volatile(jump_store as *mut u64, __boot as *const () as u64);
+        core::ptr::write_volatile(jump_store as *mut u64, 0x80000);//__boot as *const () as u64);
+        // as this core may have caches enabled, clean/invalidate so the other core
+        // sees the correct data on memory and the write does not only hit the cache
+        cache::cleaninvalidate();
         asm!("sev"); // trigger an event to wake up the sleeping cores
     }
 }

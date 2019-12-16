@@ -32,6 +32,7 @@ ruspiro-gpio = { path = "../gpio", version = "0.3" }
 ruspiro-interrupt = { path = "../interrupt", version = "0.3" }
 ruspiro-uart = { path = "../uart", version = "0.3" }
 ruspiro-timer = { path = "../timer", version = "0.3" }
+ruspiro-cache = { path = "../cache", version = "0.3.0" }
 
 [features]
 default = ["ruspiro_pi3"]
