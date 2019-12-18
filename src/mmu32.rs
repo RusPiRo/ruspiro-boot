@@ -35,7 +35,7 @@ pub fn initialize_mmu(core: u32) {
 
     // set ttlb base table address
     //let ttlb_base = TTBASE | 0x06a;
-    let ttlb_base = unsafe { (&MMU_CFG.ttlb[0] as *const u32) as u32 };// | 0x6a; // what's 0x6a?
+    let ttlb_base = unsafe { (&MMU_CFG.ttlb[0] as *const u32) as u32 }; // | 0x6a; // what's 0x6a?
     ttbr0::write(
         ttbr0::TTB0::with_value(ttlb_base >> 14)
             | ttbr0::S::SHAREABLE
@@ -66,11 +66,7 @@ pub fn initialize_mmu(core: u32) {
 
     // enable the MMU, instruction + data cache
     // SCTLR register
-    sctlr::write(
-        sctlr::M::ENABLE |
-        sctlr::I::ENABLE |
-        sctlr::C::ENABLE
-    );
+    sctlr::write(sctlr::M::ENABLE | sctlr::I::ENABLE | sctlr::C::ENABLE);
 
     // let 2 cycles pass with a nop to settle the MMU
     nop();

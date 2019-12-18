@@ -35,17 +35,6 @@ ruspiro-timer = { path = "../timer", version = "0.3" }
 ruspiro-cache = { path = "../cache", version = "0.3.0" }
 
 [features]
-default = ["ruspiro_pi3"]
-ruspiro_pi3 = []
 singlecore = []
 with_panic = []
 with_exception = []
-
-[package.metadata.docs.rs]
-all-features = false
-no-default-features = true
-#default-target = "armv7-unknown-linux-gnueabihf"
-#rustc-args = [
-#    "-C target-cpu=cortex-a53",
-#    "-C target-feature=+a53,+fp-armv8,+v8,+vfp3,+d16,+thumb2,+neon"
-#    ]

@@ -16,14 +16,14 @@
 /// after the actual one finished processing this function
 ///
 /// # Example
-/// ```
+/// ```ignore
+/// # use ruspiro_boot::come_alive_with;
 /// come_alive_with!(my_init_once);
 ///
 /// fn my_init_once(core: u32) {
 ///     // do any one-time initialization here....
 /// }
 /// ```
-///
 #[macro_export]
 macro_rules! come_alive_with {
     // macro used with a path given to it matches this branch
@@ -43,14 +43,14 @@ macro_rules! come_alive_with {
 /// on each core individually. Therefore this function is called with the core number it's running on.
 ///
 /// # Example
-/// ```
+/// ```ignore
+/// # use ruspiro_boot::run_with;
 /// run_with!(my_processing);
 ///
 /// fn my_processing(core: u32) -> ! {
 ///     loop { } // safely hang here as we should never return.
 /// }
 /// ```
-///
 #[macro_export]
 macro_rules! run_with {
     // macro used with a path given to it matches this branch
