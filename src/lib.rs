@@ -40,13 +40,24 @@
 //! your desired target architecture for the build:
 //! [aarch32 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.0/link32.ld)
 //! [aarch64 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.0/link64.ld)
+//! 
+//! # Features
 //!
-//! The **recommanded** way would be to use a build script that copies the linker script from this
-//! crate into your current crates directory to be used for linking. To do soe create a ``build.rs``
-//! file in your projects root folder with the following contents:
+//! - `with_panic` will ensure that a default panic handler is implemented.
+//! - `singlecore` enforces the compilation of the single core boot sequence. Only the main core 0 is then running.
+//! - `ruspiro_pi3` is passed to dependent crates to properly build them for the desired Raspberry Pi version
+//!
+//! To successfully build a bare metal binary using this crate for the boot strapping part it is 
+//! **highly recomended** to use the linker script provided by this crate. Based on the target
+//! architecture to be built it is either [link32.ld](link32.ld) or [link64.ld](link64.ld). To
+//! conviniently refer to the linker scripts contained in this crate it's recommended to use a 
+//! specific build script in your project that copies the required file to your current project 
+//! folder and could then be referred to with the `RUSTFLAG` parameter `-C link-arg=-T./link<aarch>.ld`.
+//! The build script is a simple `build.rs` rust file in your project root with the following
+//! contents:
 //! ```no_run
 //! use std::{env, fs, path::Path};
-//!
+//! 
 //! fn main() {
 //!     // copy the linker script from the boot crate to the current directory
 //!     // so it will be invoked by the linker
@@ -62,24 +73,15 @@
 //!     fs::copy(src_file, trg_file).unwrap();
 //! }
 //! ```
-//! As the boot routines provided by this crate depend on some external defined linker symbols the binary should always
-//! be linked with the linker script corresponding to the build target:
-//! # Features
-//!
-//! - ``with_panic`` will ensure that a default panic handler is implemented.
-//! - ``with_exception`` will ensure that a default exception and interrupt handler is implemented.
-//! - ``singlecore`` enforces the compilation of the single core boot sequence. Only the main core 0 is then running.
-//!
+//! 
+//! To get started you could check out the template projects [here](https://www.github.com/RusPiRo/ruspiro_templates)
+//! 
 
 pub mod macros;
 pub use self::macros::*;
 
 #[cfg_attr(target_arch = "aarch64", path = "mmu64.rs")]
 #[cfg_attr(target_arch = "arm", path = "mmu32.rs")]
-#[cfg_attr(
-    not(all(target_arch = "arm", target_arch = "aarch64")),
-    path = "mmuxx.rs"
-)]
 mod mmu;
 
 #[cfg(not(test))]
@@ -92,6 +94,7 @@ use ruspiro_cache as cache;
 use ruspiro_interrupt::IRQ_MANAGER;
 use ruspiro_timer as timer;
 use ruspiro_uart::Uart1;
+use ruspiro_console::*;
 
 extern "C" {
     fn __kernel_startup(core: u32);
@@ -109,6 +112,7 @@ extern "C" {
 fn __rust_entry(core: u32) -> ! {
     // very first thing is to setup the MMU which allows us to
     // use atomic operations in the upcomming initialization
+    #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
     mmu::initialize_mmu(core);
 
     // special additional setup might be done on the main core only
@@ -119,15 +123,12 @@ fn __rust_entry(core: u32) -> ! {
         let mut uart = Uart1::new();
 
         let _ = uart.initialize(250_000_000, 115_200);
+        CONSOLE.take_for(|console| console.replace(uart));
 
         #[cfg(target_arch = "aarch64")]
-        uart.send_string(
-            "\r\n########## RusPiRo ----- Bootstrapper v0.3 @ Aarch64 ----- ##########\r\n",
-        );
+        println!("\r\n########## RusPiRo ----- Bootstrapper v0.3 @ Aarch64 ----- ##########");
         #[cfg(target_arch = "arm")]
-        uart.send_string(
-            "\r\n########## RusPiRo ----- Bootstrapper v0.3 @ Aarch32 ----- ##########\r\n",
-        );
+        println!("\r\n########## RusPiRo ----- Bootstrapper v0.3 @ Aarch32 ----- ##########");
 
         // do some arbitrary sleep here to let the uart send the initial greetings before running
         // the kernel, which may initialize the UART for it's own purpose and this would break

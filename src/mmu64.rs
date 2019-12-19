@@ -23,6 +23,10 @@ static mut MMU_CFG: MmuConfig = MmuConfig {
     ttlb_lvl1: [0; 513],
 };
 
+/// Initialize the MMU. This configures an initial 1:1 mapping accross the whole available
+/// memory of the Raspberry Pi. Only the memory region from 0x3F00_0000 to 0x4002_0000 is configured
+/// as device memory as this is the area the memory mapped peripherals and the core mailboxes are
+/// located at.
 pub fn initialize_mmu(core: u32) {
     // the mmu configuration depents on the exception level we are running in
     let el = currentel::read(currentel::el::Field).value();
@@ -47,6 +51,8 @@ pub fn initialize_mmu(core: u32) {
     }
 }
 
+/// Disable the MMU. This keeps the current mapping table configuration untouched.
+#[allow(dead_code)]
 pub fn disable_mmu() {
     // the mmu configuration depents on the exception level we are running in
     let el = currentel::read(currentel::el::Field).value();
@@ -163,6 +169,9 @@ fn disable_mmu_el2() {
     sctlr_el2::write(sctlr_el2::M::DISABLE | sctlr_el2::C::DISABLE | sctlr_el2::I::DISABLE);
 }
 
+/// Perform the actual page table configuration to ensure 1:1 memory mapping with the desired
+/// attributes.
+/// 
 /// # Safety
 /// A call to this initial MMU setup and configuration should always be called only once and from
 /// the main core booting up first only. As long as the MMU is not up and running there is no way

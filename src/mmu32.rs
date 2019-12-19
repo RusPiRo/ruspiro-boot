@@ -18,6 +18,10 @@ struct MmuConfig {
 /// translation table in aarch32
 static mut MMU_CFG: MmuConfig = MmuConfig { ttlb: [0; 4096] };
 
+/// Initialize the MMU. This configures an initial 1:1 mapping accross the whole available
+/// memory of the Raspberry Pi. Only the memory region from 0x3F00_0000 to 0x4002_0000 is configured
+/// as device memory as this is the area the memory mapped peripherals and the core mailboxes are
+/// located at.
 pub fn initialize_mmu(core: u32) {
     // disbale the MMU before changing any configuration settings
     disable_mmu();
@@ -75,6 +79,8 @@ pub fn initialize_mmu(core: u32) {
     isb();
 }
 
+/// Disable the MMU. This keeps the current mapping table configuration untouched.
+#[allow(dead_code)]
 pub fn disable_mmu() {
     // disable the MMU, instruction + data cache
     // SCTLR register
@@ -86,6 +92,13 @@ pub fn disable_mmu() {
     isb();
 }
 
+/// Perform the actual page table configuration to ensure 1:1 memory mapping with the desired
+/// attributes.
+/// 
+/// # Safety
+/// A call to this initial MMU setup and configuration should always be called only once and from
+/// the main core booting up first only. As long as the MMU is not up and running there is no way
+/// to secure access with atmic operations as they require the MMU to not hang the core
 fn setup_page_tables() {
     unsafe {
         // create entries for 1:1 memory mappings up to address 0x3F00_0000

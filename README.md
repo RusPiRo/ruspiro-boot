@@ -9,20 +9,34 @@ This crate provides basic boot code that - when build into a kernel crate - will
 
 ## Hint
 
-The usage of this crate does only make sense when building a Raspberry Pi 3 bare metal kernel. The baremetal bootstrapping provided by this crate can be build for either Aarch32 or Aarch64 target architectures. It has been verified to cross compile from a Windows host machine successfully for both architectures and the execution is tested on a Raspberry Pi 3 B+.
+The usage of this crate does only make sense when building a Raspberry Pi 3 bare metal kernel. The 
+baremetal bootstrapping provided by this crate can be build for either Aarch32 or Aarch64 target
+architectures. It has been verified to cross compile from a Windows host machine successfully for
+both architectures and the execution is tested on a Raspberry Pi 3 B+.
 
 ## Usage
 To use this crate simply add the following lines to your ``Cargo.toml`` file:
 (hint: git dependency as long as the crate is not registered at crates.io)
-```
+```toml
 [dependencies]
-ruspiro-boot = { version = "0.3", features = ["with_panic", "with_exception"] }
+ruspiro-boot = { version = "0.3", features = ["with_panic"] }
 ```
-The feature ``with_panic`` will ensure that a default panic handler is implemented.
-The feature ``with_exception`` will ensure that a default exception and interrupt handler is implemented. However, if the interrupts are globaly active with eg. ``cpsie i`` than the default interrupt handler will simply deactiviate the global interrupts as it cannot acknowledge the incomming interrupt which could lead to endless interrupt loops.
-The feature ``singlecore`` will keep all cores except one in a "parked" state so the runtime only uses a single core.
+In the main rust file refer to this crate with this:
+```rust
+#[macro_use]
+extern crate ruspiro_boot;
+```
+The usage of `extern crate` is mandatory to ensure the boot strapping is properly linked into the
+final binary.
 
-To successfully build a bare metal binary using the this crate for the bootstrapping part it is **highly recomended** to use the linker script provided by this crate. Based on the target architecture to be built it is either [link32.ld](link32.ld) or [link64.ld](link64.ld).
+## Features
+Feature            | Purpose
+-------------------|--------------------------
+``with_panic``     | Implement a default panic handler
+``singlecore``     | Keep all cores except one in a "parked" state so the runtime only uses a single core.
+``ruspiro_pi3``    | This is passed to the dependend crates to ensure they will be build properly for this target device.
+
+To successfully build a bare metal binary using this crate for the boot strapping part it is **highly recomended** to use the linker script provided by this crate. Based on the target architecture to be built it is either [link32.ld](link32.ld) or [link64.ld](link64.ld).
 To conviniently refer to the linker scripts contained in this crate it's recommended to use a specific build script in your project that copies the required file to your current project folder and could then be referred to with the ``RUSTFLAG`` ``-C link-arg=-T./link<aarch>.ld``.
 The build script is a simple ``build.rs`` rust file in your project root with the following contents:
 ```rust
@@ -44,8 +58,7 @@ fn main() {
 }
 ``` 
 
-As already mentioned you than need to refer this linker script with the ``RUSTFLAG`` parameter ``-C link-arg=-T./link<aarch>.ld`` to your build script like so:
-
+To get started you could check out the template projects [here](https://www.github.com/RusPiRo/ruspiro_templates)
 
 ## License
 Licensed under Apache License, Version 2.0, ([LICENSE](LICENSE) or http://www.apache.org/licenses/LICENSE-2.0)

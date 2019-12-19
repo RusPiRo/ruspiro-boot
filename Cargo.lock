@@ -81,6 +81,7 @@ version = "0.3.0"
 dependencies = [
  "cc",
  "ruspiro-cache",
+ "ruspiro-console",
  "ruspiro-gpio",
  "ruspiro-interrupt",
  "ruspiro-register",
