@@ -31,6 +31,3 @@ matrix:
         - sudo chmod ugo+x build.sh
       # remove the path in the dependencies of the cargo file to ensure we use the version from crates.io
       script: sed -i 's/path.*=.*\".*", version/version/g' Cargo.toml && ./build.sh 32 travis
-
-    - name: "unit tests"
-      script: sed -i 's/path.*=.*\".*", version/version/g' Cargo.toml && cargo test --tests
