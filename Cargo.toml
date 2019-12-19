@@ -1,19 +1,21 @@
 [package]
 name = "ruspiro-boot"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.2.1" # remember to update html_root_url
+version = "0.3.0" # remember to update html_root_url
 description = """
-Baremetal boot code for the Raspberry Pi 3 to conviniently start a custom kernel within the Rust environment
-without the need to dangle with all the initial setup like stack pointers, getting MMU setup and all cores kicked off 
-for processing.
+Baremetal boot strapper code for the Raspberry Pi 3 to conviniently start a custom kernel within the Rust environment
+without the need to deal with all the initial setup like stack pointers, getting MMU setup and get all cores kicked off 
+for processing. Supports Aarch32 and Aarch64 builds.
 """
 license = "Apache-2.0"
 repository = "https://github.com/RusPiRo/ruspiro-boot"
-documentation = "https://docs.rs/ruspiro-boot/0.2.1"
+documentation = "https://docs.rs/ruspiro-boot/0.3.0"
 readme = "README.md"
 keywords = ["RusPiRo", "raspberrypi", "boot", "baremetal", "multicore"]
 categories = ["no-std", "embedded"]
 edition = "2018"
+links = "ruspiro-boot"
+build = "build.rs"
 
 [badges]
 travis-ci = { repository = "RusPiRo/ruspiro-boot", branch = "master" }
@@ -25,19 +27,19 @@ maintenance = { status = "actively-developed" }
 cc = "1.0.38"
 
 [dependencies]
+ruspiro-register = { path = "../register", version = "0.3" }
+ruspiro-gpio = { path = "../gpio", version = "0.3" }
+ruspiro-interrupt = { path = "../interrupt", version = "0.3" }
+ruspiro-uart = { path = "../uart", version = "0.3" }
+ruspiro-console = { path = "../console", version = "0.3" }
+ruspiro-timer = { path = "../timer", version = "0.3" }
+ruspiro-cache = { path = "../cache", version = "0.3" }
 
 [features]
-default = ["ruspiro_pi3"]
-ruspiro_pi3 = []
+ruspiro_pi3 = [
+    "ruspiro-gpio/ruspiro_pi3",
+    "ruspiro-uart/ruspiro_pi3",
+    "ruspiro-timer/ruspiro_pi3"
+]
 singlecore = []
 with_panic = []
-with_exception = []
-
-[package.metadata.docs.rs]
-all-features = false
-no-default-features = true
-#default-target = "armv7-unknown-linux-gnueabihf"
-#rustc-args = [
-#    "-C target-cpu=cortex-a53",
-#    "-C target-feature=+a53,+fp-armv8,+v8,+vfp3,+d16,+thumb2,+neon"
-#    ]
