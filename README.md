@@ -25,7 +25,7 @@ The feature ``singlecore`` will keep all cores except one in a "parked" state so
 To successfully build a bare metal binary using the this crate for the bootstrapping part it is **highly recomended** to use the linker script provided by this crate. Based on the target architecture to be built it is either [link32.ld](link32.ld) or [link64.ld](link64.ld).
 To conviniently refer to the linker scripts contained in this crate it's recommended to use a specific build script in your project that copies the required file to your current project folder and could then be referred to with the ``RUSTFLAG`` ``-C link-arg=-T./link<aarch>.ld``.
 The build script is a simple ``build.rs`` rust file in your project root with the following contents:
-```
+```rust
 use std::{env, fs, path::Path};
 
 fn main() {

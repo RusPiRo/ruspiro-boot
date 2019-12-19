@@ -4,7 +4,7 @@ authors = ["André Borrmann <pspwizard@gmx.de>"]
 version = "0.3.0" # remember to update html_root_url
 description = """
 Baremetal boot strapper code for the Raspberry Pi 3 to conviniently start a custom kernel within the Rust environment
-without the need to deal with all the initial setup like stack pointers, getting MMU setup and all cores kicked off 
+without the need to deal with all the initial setup like stack pointers, getting MMU setup and get all cores kicked off 
 for processing. Supports Aarch32 and Aarch64 builds.
 """
 license = "Apache-2.0"
