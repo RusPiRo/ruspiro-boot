@@ -62,7 +62,10 @@
 //!     // copy the linker script from the boot crate to the current directory
 //!     // so it will be invoked by the linker
 //!     let ld_source = env::var_os("DEP_RUSPIRO_BOOT_LINKERSCRIPT")
-//!         .expect("error in ruspiro build, `ruspiro-boot` not a dependency?");
+//!         .expect("error in ruspiro build, `ruspiro-boot` not a dependency?")
+//!         .to_str()
+//!         .unwrap()
+//!         .replace("\\", "/");;
 //!     let src_file = Path::new(&ld_source);
 //!     let trg_file = format!(
 //!         "{}/{}",

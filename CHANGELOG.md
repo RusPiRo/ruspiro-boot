@@ -1,4 +1,8 @@
 # Changelog
+## :apple: v0.3.1
+  - ### :detective: Fixes
+    Fix the path created by the build script pointing to the linker script file. It should not contain a '\\\\'. In addition the examples for the build script to be implementend on consumer side was updated.
+    
 ## :carrot: v0.3.0
   - ### :bulb: Features
     Refactor the boot strapping code to support `Aarch32` and `Aarch64` build target architectures.

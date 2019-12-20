@@ -26,7 +26,7 @@ fn main() {
                 .compile("excvector");
             // print the linker file location of the boot crate to the env-variables
             println!(
-                "cargo:linkerscript={}\\link32.ld",
+                "cargo:linkerscript={}/link32.ld",
                 script_location.display()
             );
         }
@@ -42,7 +42,7 @@ fn main() {
                 .compile("excvector");
             // print the linker file location of the boot crate to the env-variables
             println!(
-                "cargo:linkerscript={}\\link64.ld",
+                "cargo:linkerscript={}/link64.ld",
                 script_location.display()
             );
         }
