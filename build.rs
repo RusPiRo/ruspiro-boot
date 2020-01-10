@@ -25,10 +25,7 @@ fn main() {
                 .flag("-march=armv8-a")
                 .compile("excvector");
             // print the linker file location of the boot crate to the env-variables
-            println!(
-                "cargo:linkerscript={}/link32.ld",
-                script_location.display()
-            );
+            println!("cargo:linkerscript={}/link32.ld", script_location.display());
         }
 
         if target_arch == "aarch64" {
@@ -41,10 +38,7 @@ fn main() {
                 .flag("-march=armv8-a")
                 .compile("excvector");
             // print the linker file location of the boot crate to the env-variables
-            println!(
-                "cargo:linkerscript={}/link64.ld",
-                script_location.display()
-            );
+            println!("cargo:linkerscript={}/link64.ld", script_location.display());
         }
     }
 }

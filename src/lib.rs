@@ -4,8 +4,8 @@
  * Author: André Borrmann
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.3.0")]
-#![no_std]
+#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.3.1")]
+#![cfg_attr(not(any(test, doctest)), no_std)]
 #![feature(asm, lang_items, linkage)]
 
 //! # RusPiRo Boot Strapping for Raspberry Pi
@@ -40,24 +40,24 @@
 //! your desired target architecture for the build:
 //! [aarch32 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.0/link32.ld)
 //! [aarch64 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.0/link64.ld)
-//! 
+//!
 //! # Features
 //!
 //! - `with_panic` will ensure that a default panic handler is implemented.
 //! - `singlecore` enforces the compilation of the single core boot sequence. Only the main core 0 is then running.
 //! - `ruspiro_pi3` is passed to dependent crates to properly build them for the desired Raspberry Pi version
 //!
-//! To successfully build a bare metal binary using this crate for the boot strapping part it is 
+//! To successfully build a bare metal binary using this crate for the boot strapping part it is
 //! **highly recomended** to use the linker script provided by this crate. Based on the target
 //! architecture to be built it is either [link32.ld](link32.ld) or [link64.ld](link64.ld). To
-//! conviniently refer to the linker scripts contained in this crate it's recommended to use a 
-//! specific build script in your project that copies the required file to your current project 
+//! conviniently refer to the linker scripts contained in this crate it's recommended to use a
+//! specific build script in your project that copies the required file to your current project
 //! folder and could then be referred to with the `RUSTFLAG` parameter `-C link-arg=-T./link<aarch>.ld`.
 //! The build script is a simple `build.rs` rust file in your project root with the following
 //! contents:
 //! ```no_run
 //! use std::{env, fs, path::Path};
-//! 
+//!
 //! fn main() {
 //!     // copy the linker script from the boot crate to the current directory
 //!     // so it will be invoked by the linker
@@ -76,9 +76,9 @@
 //!     fs::copy(src_file, trg_file).unwrap();
 //! }
 //! ```
-//! 
+//!
 //! To get started you could check out the template projects [here](https://www.github.com/RusPiRo/ruspiro_templates)
-//! 
+//!
 
 pub mod macros;
 pub use self::macros::*;
@@ -87,17 +87,19 @@ pub use self::macros::*;
 #[cfg_attr(target_arch = "arm", path = "mmu32.rs")]
 mod mmu;
 
-#[cfg(not(test))]
+#[cfg(not(any(test, doctest)))]
 mod panic;
-#[cfg(not(test))]
+#[cfg(not(any(test, doctest)))]
 mod stubs;
 
-#[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
+#[cfg(all(target_arch = "aarch64", not(feature = "singlecore")))]
 use ruspiro_cache as cache;
+
+use ruspiro_console::*;
 use ruspiro_interrupt::IRQ_MANAGER;
+use ruspiro_mailbox::*;
 use ruspiro_timer as timer;
 use ruspiro_uart::Uart1;
-use ruspiro_console::*;
 
 extern "C" {
     fn __kernel_startup(core: u32);
@@ -117,15 +119,18 @@ fn __rust_entry(core: u32) -> ! {
     // use atomic operations in the upcomming initialization
     #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
     mmu::initialize_mmu(core);
-
     // special additional setup might be done on the main core only
     if core == 0 {
+        // get the current core clock rate to initialize the Uart1 with
+        let core_rate = MAILBOX
+            .take_for(|mb: &mut Mailbox| mb.get_clockrate(ClockId::Core))
+            .unwrap_or(250_000_000);
         // first thing we would like to do is to let the outside world know that we are booting
         // so if this is core 0 we initialze the uart1 interface with default settings and print some
         // string
         let mut uart = Uart1::new();
 
-        let _ = uart.initialize(250_000_000, 115_200);
+        let _ = uart.initialize(core_rate, 115_200);
         CONSOLE.take_for(|console| console.replace(uart));
 
         #[cfg(target_arch = "aarch64")]

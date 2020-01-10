@@ -29,7 +29,7 @@ static mut MMU_CFG: MmuConfig = MmuConfig {
 /// located at.
 pub fn initialize_mmu(core: u32) {
     // the mmu configuration depents on the exception level we are running in
-    let el = currentel::read(currentel::el::Field).value();
+    let el = currentel::read(currentel::EL::Field).value();
 
     // disable MMU before changing any settings and re-activating
     match el {
@@ -55,7 +55,7 @@ pub fn initialize_mmu(core: u32) {
 #[allow(dead_code)]
 pub fn disable_mmu() {
     // the mmu configuration depents on the exception level we are running in
-    let el = currentel::read(currentel::el::Field).value();
+    let el = currentel::read(currentel::EL::Field).value();
     match el {
         1 => disable_mmu_el1(),
         2 => disable_mmu_el2(),
@@ -83,7 +83,7 @@ fn initialize_mmu_el1() {
     // set the ttlb base address, this is where the memory address translation
     // table walk starts
     let ttlb_base = unsafe { (&MMU_CFG.ttlb_lvl0[0] as *const u64) as u64 };
-    ttbr0_el1::write(ttbr0_el1::baddr::with_value(ttlb_base));
+    ttbr0_el1::write(ttbr0_el1::BADDR::with_value(ttlb_base));
 
     // configure the TTLB attributes
     tcr_el1::write(
@@ -136,7 +136,7 @@ fn initialize_mmu_el2() {
     // set the ttlb base address, this is where the memory address translation
     // table walk starts
     let ttlb_base = unsafe { (&MMU_CFG.ttlb_lvl0[0] as *const u64) as u64 };
-    ttbr0_el2::write(ttbr0_el2::baddr::with_value(ttlb_base));
+    ttbr0_el2::write(ttbr0_el2::BADDR::with_value(ttlb_base));
 
     // configure the TTLB attributes
     tcr_el2::write(
@@ -171,7 +171,7 @@ fn disable_mmu_el2() {
 
 /// Perform the actual page table configuration to ensure 1:1 memory mapping with the desired
 /// attributes.
-/// 
+///
 /// # Safety
 /// A call to this initial MMU setup and configuration should always be called only once and from
 /// the main core booting up first only. As long as the MMU is not up and running there is no way

@@ -94,7 +94,7 @@ pub fn disable_mmu() {
 
 /// Perform the actual page table configuration to ensure 1:1 memory mapping with the desired
 /// attributes.
-/// 
+///
 /// # Safety
 /// A call to this initial MMU setup and configuration should always be called only once and from
 /// the main core booting up first only. As long as the MMU is not up and running there is no way

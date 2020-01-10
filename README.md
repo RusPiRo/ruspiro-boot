@@ -19,7 +19,7 @@ To use this crate simply add the following lines to your ``Cargo.toml`` file:
 (hint: git dependency as long as the crate is not registered at crates.io)
 ```toml
 [dependencies]
-ruspiro-boot = { version = "0.3", features = ["with_panic"] }
+ruspiro-boot = { version = "0.3", features = ["ruspiro_pi3", "with_panic"] }
 ```
 In the main rust file refer to this crate with this:
 ```rust

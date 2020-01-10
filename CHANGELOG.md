@@ -1,7 +1,14 @@
 # Changelog
 ## :apple: v0.3.1
   - ### :detective: Fixes
-    Fix the path created by the build script pointing to the linker script file. It should not contain a '\\\\'. In addition the examples for the build script to be implementend on consumer side was updated.
+    - Fix the path created by the build script pointing to the linker script file. It should not contain a '\\\\'.
+    In addition the examples for the build script to be implementend on consumer side was updated.
+  - ### :wrench: Maintenance
+    - Use additional ``cfg`` and ``cfg_attr`` to enable running ``cargo test`` which requires some functions from ``std``.
+    - use latest ``ruspiro-register`` version
+    - Remove ``ruspiro-gpio`` dependency
+
+  
     
 ## :carrot: v0.3.0
   - ### :bulb: Features
