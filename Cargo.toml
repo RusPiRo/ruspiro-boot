@@ -33,6 +33,7 @@ ruspiro-uart = { path = "../uart", version = "0.3" }
 ruspiro-console = { path = "../console", version = "0.3" }
 ruspiro-timer = { path = "../timer", version = "0.4" }
 ruspiro-cache = { path = "../cache", version = "0.3" }
+ruspiro-interrupt = { path = "../interrupt", version = "0.3" }
 
 [features]
 ruspiro_pi3 = [

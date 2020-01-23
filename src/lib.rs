@@ -99,6 +99,7 @@ use ruspiro_console::*;
 use ruspiro_mailbox::*;
 use ruspiro_timer as timer;
 use ruspiro_uart::Uart1;
+use ruspiro_interrupt::IRQ_MANAGER;
 
 extern "C" {
     fn __kernel_startup(core: u32);
@@ -141,6 +142,9 @@ fn __rust_entry(core: u32) -> ! {
         // the kernel, which may initialize the UART for it's own purpose and this would break
         // this transfer...
         timer::sleep(10000);
+
+        // configure interrupt manager for further usage
+        IRQ_MANAGER.take_for(|mgr| mgr.initialize());
     }
 
     // now follows the configuration that is needed to be done by all cores
