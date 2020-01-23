@@ -3,15 +3,20 @@
   - ### :bulb: Features
     - add some console log statements in the panic handler that gives a clue of the panic when at least
     the console could be setup properly before panicing the first time :)
+    - use Raspberry Mailbox to retrieve clock speed to initialize miniUart with
   - ### :detective: Fixes
     - Fix the path created by the build script pointing to the linker script file. It should not contain a '\\\\'.
     In addition the examples for the build script to be implementend on consumer side was updated.
     - Fix issues with the exception calls and returns as several registers where trashed that
     should have been preserved
+    
   - ### :wrench: Maintenance
     - Use additional ``cfg`` and ``cfg_attr`` to enable running ``cargo test`` which requires some functions from ``std``.
-    - use latest ``ruspiro-register`` version
+    - Update to latest ``ruspiro-register`` version
     - Remove ``ruspiro-gpio`` dependency
+    - Remove the ``ruspiro_interrupt`` dependencie to let the using crate decide whether to incorporate
+    interrupt handling or not. This than also includes the crate introducing interrupt handling usage need to
+    proper initialize interrupt handling.
 
   
     

@@ -38,8 +38,8 @@
 //! final binary. To use the linker script that is provided as part of this crate in
 //! your own rust binary crate you could either copy them manually from the git repository based on
 //! your desired target architecture for the build:
-//! [aarch32 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.0/link32.ld)
-//! [aarch64 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.0/link64.ld)
+//! [aarch32 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.1/link32.ld)
+//! [aarch64 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.1/link64.ld)
 //!
 //! # Features
 //!
@@ -96,7 +96,6 @@ mod stubs;
 use ruspiro_cache as cache;
 
 use ruspiro_console::*;
-use ruspiro_interrupt::IRQ_MANAGER;
 use ruspiro_mailbox::*;
 use ruspiro_timer as timer;
 use ruspiro_uart::Uart1;
@@ -142,9 +141,6 @@ fn __rust_entry(core: u32) -> ! {
         // the kernel, which may initialize the UART for it's own purpose and this would break
         // this transfer...
         timer::sleep(10000);
-
-        // now initialize the interrupt manager
-        IRQ_MANAGER.take_for(|irq_mgr| irq_mgr.initialize());
     }
 
     // now follows the configuration that is needed to be done by all cores
