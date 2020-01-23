@@ -26,6 +26,10 @@ fn main() {
                 .compile("excvector");
             // print the linker file location of the boot crate to the env-variables
             println!("cargo:linkerscript={}/link32.ld", script_location.display());
+
+            println!("cargo:rerun-if-changed=link32.ld");
+            println!("cargo:rerun-if-changed=src/asm/aarch32/bootstrap.S");
+            println!("cargo:rerun-if-changed=src/asm/aarch32/exceptionvector.S");
         }
 
         if target_arch == "aarch64" {
@@ -39,6 +43,10 @@ fn main() {
                 .compile("excvector");
             // print the linker file location of the boot crate to the env-variables
             println!("cargo:linkerscript={}/link64.ld", script_location.display());
+            
+            println!("cargo:rerun-if-changed=link64.ld");
+            println!("cargo:rerun-if-changed=src/asm/aarch64/bootstrap.S");
+            println!("cargo:rerun-if-changed=src/asm/aarch64/exceptionvector.S");
         }
-    }
+    }    
 }

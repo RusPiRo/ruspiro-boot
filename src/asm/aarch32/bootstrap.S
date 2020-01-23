@@ -87,8 +87,9 @@ __boot:
 	orr 	r0, r0, #0x300000		/* enable single precision */
 	orr 	r0, r0, #0xC00000		/* enable double precision */
 	mcr 	p15, 0, r0, c1, c0, 2
+	
 	mov 	r0, #0x40000000
-	fmxr	fpexc, r0
+	vmsr	fpexc, r0
 
     // finally call into the rust code entry point
     mrc     p15, 0, r0, c0, c0, 5   // get core id

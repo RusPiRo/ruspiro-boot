@@ -1,8 +1,13 @@
 # Changelog
 ## :apple: v0.3.1
+  - ### :bulb: Features
+    - add some console log statements in the panic handler that gives a clue of the panic when at least
+    the console could be setup properly before panicing the first time :)
   - ### :detective: Fixes
     - Fix the path created by the build script pointing to the linker script file. It should not contain a '\\\\'.
     In addition the examples for the build script to be implementend on consumer side was updated.
+    - Fix issues with the exception calls and returns as several registers where trashed that
+    should have been preserved
   - ### :wrench: Maintenance
     - Use additional ``cfg`` and ``cfg_attr`` to enable running ``cargo test`` which requires some functions from ``std``.
     - use latest ``ruspiro-register`` version
