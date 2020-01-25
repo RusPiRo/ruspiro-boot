@@ -3,7 +3,7 @@
   - ### :bulb: Features
     - add some console log statements in the panic handler that gives a clue of the panic when at least
     the console could be setup properly before panicing the first time :)
-    - use Raspberry Mailbox to retrieve clock speed to initialize miniUart with
+    - use Raspberry Pi Mailbox to retrieve clock speed to initialize miniUart with
   - ### :detective: Fixes
     - Fix the path created by the build script pointing to the linker script file. It should not contain a '\\\\'.
     In addition the examples for the build script to be implementend on consumer side was updated.

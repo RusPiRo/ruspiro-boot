@@ -39,7 +39,8 @@ ruspiro-interrupt = { path = "../interrupt", version = "0.3" }
 ruspiro_pi3 = [
     "ruspiro-mailbox/ruspiro_pi3",
     "ruspiro-uart/ruspiro_pi3",
-    "ruspiro-timer/ruspiro_pi3"
+    "ruspiro-timer/ruspiro_pi3",
+    "ruspiro-interrupt/ruspiro_pi3"
 ]
 singlecore = []
 with_panic = []

@@ -43,14 +43,17 @@
 //!
 //! # Features
 //!
-//! - `with_panic` will ensure that a default panic handler is implemented.
-//! - `singlecore` enforces the compilation of the single core boot sequence. Only the main core 0 is then running.
-//! - `ruspiro_pi3` is passed to dependent crates to properly build them for the desired Raspberry Pi version
+//! Feature         | Description
+//! ----------------|------------------------------------------------------------------------------
+//! ``ruspiro_pi3`` | Passed to dependent crates to ensure  proper MMIO base memory address for Raspberry Pi 3 when accessing the peripherals
+//! ``singlecore``  | Enforces the compilation of the single core boot sequence. Only the main core 0 is then running.
+//! ``with_panic``  | Compiles a default simple panic handler into the crate. This will hang the core that paniced. No unwinding is performed
 //!
-//! To successfully build a bare metal binary using this crate for the boot strapping part it is
-//! **highly recomended** to use the linker script provided by this crate. Based on the target
-//! architecture to be built it is either [link32.ld](link32.ld) or [link64.ld](link64.ld). To
-//! conviniently refer to the linker scripts contained in this crate it's recommended to use a
+//! ## Hint:
+//! To successfully build a bare metal binary/kernel that depends on this one to perform the boot
+//! strapping part it is **highly recomended** to use the linker script provided by this crate. Based
+//! on the target architecture to be built it is either [link32.ld](link32.ld) or [link64.ld](link64.ld).
+//! To conviniently refer to the linker scripts contained in this crate it's recommended to use a
 //! specific build script in your project that copies the required file to your current project
 //! folder and could then be referred to with the `RUSTFLAG` parameter `-C link-arg=-T./link<aarch>.ld`.
 //! The build script is a simple `build.rs` rust file in your project root with the following
@@ -96,10 +99,10 @@ mod stubs;
 use ruspiro_cache as cache;
 
 use ruspiro_console::*;
+use ruspiro_interrupt::IRQ_MANAGER;
 use ruspiro_mailbox::*;
 use ruspiro_timer as timer;
 use ruspiro_uart::Uart1;
-use ruspiro_interrupt::IRQ_MANAGER;
 
 extern "C" {
     fn __kernel_startup(core: u32);
@@ -141,7 +144,7 @@ fn __rust_entry(core: u32) -> ! {
         // do some arbitrary sleep here to let the uart send the initial greetings before running
         // the kernel, which may initialize the UART for it's own purpose and this would break
         // this transfer...
-        timer::sleep(10000);
+        timer::sleep(timer::Useconds(10000));
 
         // configure interrupt manager for further usage
         IRQ_MANAGER.take_for(|mgr| mgr.initialize());

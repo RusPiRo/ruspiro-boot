@@ -18,11 +18,16 @@ fn panic(info: &PanicInfo) -> ! {
     // Panicing is undefined behaviour so we are unable to recover from one into a valid state.
     // Halt the panicing core and safely do nothing!
     if let Some(location) = info.location() {
-        ruspiro_console::error!("PANIC at {:?}, {}:{}", location.file(), location.line(), location.column());
+        ruspiro_console::error!(
+            "PANIC at {:?}, {}:{}",
+            location.file(),
+            location.line(),
+            location.column()
+        );
     } else {
         ruspiro_console::error!("PANIC somewhere!");
     }
-    
+
     loop {}
 }
 
