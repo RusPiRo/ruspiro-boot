@@ -9,6 +9,9 @@
 //! fully.
 //!
 #[doc(hidden)]
+#[allow(dead_code)]
 pub fn initialize_mmu(_core: u32) {}
+
 #[doc(hidden)]
+#[allow(dead_code)]
 pub fn disable_mmu() {}

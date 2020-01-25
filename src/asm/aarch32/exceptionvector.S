@@ -22,7 +22,7 @@
  * save current core state before running any IRQ handler
  **********************************************************************/
 .macro save_state
-    stmfd	sp!, {r0-r3, lr}  // store unbanked corruptile registers +  return address
+    stmfd	sp!, {r0-r11, lr}  // store corruptile registers +  return address
     //mrs     r0, spsr    // get the saved pstate register and store it as well
     //stmfd   sp!, {r0}
     
@@ -41,7 +41,7 @@
 
     //ldmfd   sp!, {r0}   // restore pstate
     //mcr     cpsr, r0
-    ldmfd	sp!, {r0-r3, pc}^ // restore unbanked corruptile registers
+    ldmfd	sp!, {r0-r11, pc}^ // restore corruptile registers
 .endm
 
 /***************************************************************************************************
@@ -169,3 +169,4 @@ __fast_interrupt_trampoline:
     bl      __exception_handler_default
 
 	restore_state_return    // return from this exception
+    
