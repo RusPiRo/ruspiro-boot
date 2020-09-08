@@ -6,7 +6,7 @@
  **********************************************************************************************************************/
 #![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.3.1")]
 #![cfg_attr(not(any(test, doctest)), no_std)]
-#![feature(asm, lang_items, linkage)]
+#![feature(llvm_asm, lang_items, linkage)]
 
 //! # RusPiRo Boot Strapping for Raspberry Pi
 //!
@@ -189,7 +189,7 @@ fn kickoff_next_core(core: u32) {
     };
     unsafe {
         core::ptr::write_volatile(jump_store as *mut u32, __boot as *const () as u32);
-        asm!("sev"); // trigger an event to wake up the sleeping cores
+        llvm_asm!("sev"); // trigger an event to wake up the sleeping cores
     }
 }
 
@@ -208,6 +208,6 @@ fn kickoff_next_core(core: u32) {
                                                                     // as this core may have caches enabled, clean/invalidate so the other core
                                                                     // sees the correct data on memory and the write does not only hit the cache
         cache::cleaninvalidate();
-        asm!("sev"); // trigger an event to wake up the sleeping cores
+        llvm_asm!("sev"); // trigger an event to wake up the sleeping cores
     }
 }
