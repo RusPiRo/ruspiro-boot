@@ -205,6 +205,6 @@ fn setup_page_tables() {
             MMU_CFG.ttlb_lvl1[i] = (i as u64 * 0x20_0000) | 0x400 | 0b01;
         }
 
-        asm!("dsb   ishst");
+        llvm_asm!("dsb   ishst");
     }
 }
