@@ -1,5 +1,6 @@
 # Changelog
-## :wrench: Maintenance
+## :banana: v0.3.2
+  - ### :wrench: Maintenance
     - use `cargo make` to stabilize build
     - change usage of `asm!` macro into `llvm_asm!`
 
