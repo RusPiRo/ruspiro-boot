@@ -1,4 +1,8 @@
 # Changelog
+## :wrench: Maintenance
+    - use `cargo make` to stabilize build
+    - change usage of `asm!` macro into `llvm_asm!`
+
 ## :apple: v0.3.1
   - ### :bulb: Features
     - add some console log statements in the panic handler that gives a clue of the panic when at least

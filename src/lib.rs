@@ -4,7 +4,7 @@
  * Author: André Borrmann
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.3.1")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.3.2")]
 #![cfg_attr(not(any(test, doctest)), no_std)]
 #![feature(llvm_asm, lang_items, linkage)]
 
@@ -38,8 +38,8 @@
 //! final binary. To use the linker script that is provided as part of this crate in
 //! your own rust binary crate you could either copy them manually from the git repository based on
 //! your desired target architecture for the build:
-//! [aarch32 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.1/link32.ld)
-//! [aarch64 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.1/link64.ld)
+//! [aarch32 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.2/link32.ld)
+//! [aarch64 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.2/link64.ld)
 //!
 //! # Features
 //!
