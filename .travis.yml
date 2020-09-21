@@ -3,6 +3,7 @@
 branches:
   only:
     - master
+    - release
 
 language: rust
 
@@ -10,42 +11,109 @@ rust:
 # build nightly only for the time beeing
   - nightly
 
-matrix:
-  fast_finish: true
+# define the stages and their order
+stages:
+  - compile
+  - test
+  - publish_dry
+  - name: prepare_release
+    if: branch = master AND type != pull_request
+  - name: deploy
+    if: branch = release AND type != pull_request
+  - name: publish
+    if: branch = release AND type != pull_request
+
+jobs:
   include:
-    - name: "build 64Bit"
+    - stage: compile
+      name: "Compile The Crate"
       install:
-        - sudo apt-get install gcc-aarch64-linux-gnu
+        - sudo apt-get install -y gcc-aarch64-linux-gnu
         - cargo install cargo-xbuild
         - cargo install cargo-make 
-        - rustup target add aarch64-unknown-linux-gnu
+        - rustup target add aarch64-unknown-none
         - rustup component add rust-src
         - rustup component add llvm-tools-preview
         # if we not build a PR we remove the patch of the dependencies to their github repo's
         - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
-      script: cargo make --profile a64-travis pi3
+      script: cargo make --profile travis pi3
 
-    - name: "build 32Bit"
+    - stage: test
+      name: "Run Doc Tests"
       install:
-        - sudo apt-get install -y gcc-arm-none-eabi
-        - cargo install cargo-xbuild
-        - cargo install cargo-make 
-        - rustup target add armv7-unknown-linux-gnueabihf
-        - rustup component add rust-src
-        - rustup component add llvm-tools-preview
+        - rustc --print cfg
         # if we not build a PR we remove the patch of the dependencies to their github repo's
         - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
-      script: cargo make --profile a32 pi3
-
-    - name: "unit tests"
+      script: cargo test --doc --features ruspiro_pi3
+    - stage: test
+      name: "Run Unit Tests"
       install:
+        - rustc --print cfg
         # if we not build a PR we remove the patch of the dependencies to their github repo's
         - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
       script: cargo test --tests --features ruspiro_pi3
 
-    - name: "doc tests"
+    - stage: publish_dry
+      name: "Run Cargo Publish Dry-Run"
       install:
-        # if we not build a PR we remove the patch of the dependencies to their github repo's
-        - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
-        - cat Cargo.toml
-      script: cargo test --doc --features ruspiro_pi3
+        - sudo apt-get install -y gcc-aarch64-linux-gnu
+        - cargo install cargo-xbuild
+        - cargo install cargo-make 
+        - rustup target add aarch64-unknown-none
+        - rustup component add rust-src
+        - rustup component add llvm-tools-preview
+      script: cargo publish --dry-run --target aarch64-unknown-none --features ruspiro_pi3
+
+    - stage: prepare_release
+      name: "Create PR against the release branch"
+      script:
+        - 'curl -H ''Authorization: Token ''"$GIT_API_TOKEN"'''' -X POST -H ''Content-type: application/json'' --data ''{"title":"Prepare Release and crates.io publishing", "head":"master", "base":"release", "draft":false, "body":"Automatic PR to the release branch as preperation to publish the library"}'' https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls > /dev/null'
+
+    - stage: deploy
+      name: "Create GitHub release"
+      
+      before_deploy:
+        # extract current crate version from argo.toml
+        - export CRATE_VERSION=v`sed -En 's/^version.*=.*\"(.*)\".*$/\1/p' < Cargo.toml`
+        # retrieve last release version from github
+        - export LAST_VERSION="$(curl --silent "https://api.github.com/repos/$TRAVIS_REPO_SLUG/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
+        # use default version if none yet published (required for proper release note extraction)
+        - export LAST_VERSION=${LAST_VERSION:-v0.0.0}
+        - echo $CRATE_VERSION
+        - echo $LAST_VERSION
+        - git config --local user.name "2ndTaleStudio"
+        - git config --local user.email "43264484+2ndTaleStudio@users.noreply.github.com"
+        # create the TAG required for the release
+        - git tag $CRATE_VERSION -m "$CRATE_VERSION"
+        # extract the release notes of the current release from the changelog
+        - sed -En '/##.*:.*:.*'"$LAST_VERSION"'/q;p' CHANGELOG.md > RELEASENOTES.md
+        - sed -i -e 's/^# Changelog/# Release Notes/g' RELEASENOTES.md
+      deploy:
+        provider: releases
+        # use dpl v2 version for deployments to support the release_notes_file option
+        edge: true
+        api_key: "$GIT_API_TOKEN"
+        name: "$CRATE_VERSION"
+        release_notes_file: "RELEASENOTES.md"
+        file: "RELEASENOTES.md"
+        skip_cleanup: true
+        on:
+          branch: release
+
+    - stage: publish
+      name: "Run Cargo Publish"
+      install:
+        - sudo apt-get install -y gcc-aarch64-linux-gnu
+        - cargo install cargo-xbuild
+        - cargo install cargo-make 
+        - rustup target add aarch64-unknown-none
+        - rustup component add rust-src
+        - rustup component add llvm-tools-preview
+        # extract current crate version from argo.toml
+        - export CRATE_VERSION=`sed -En 's/^version.*=.*\"(.*)\".*$/\1/p' < Cargo.toml`
+        # before actually publishing replace the final version for doc and repository in the Crago.toml
+        - sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' Cargo.toml
+        # also update the version in the lib.rs doc root url
+        - sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' src/lib.rs
+      # publish with token and dirty flag as we just updated some files and won't commit them back to the branch
+      script: cargo publish --token $CRATES_TOKEN --allow-dirty --target aarch64-unknown-none --features ruspiro_pi3

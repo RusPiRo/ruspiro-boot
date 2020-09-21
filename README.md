@@ -2,7 +2,7 @@
 
 This crate provides basic boot code that - when build into a kernel crate - will be executed as soon as the Raspberry Pi powers up. As the building of this crate and finally linking into the kernel image depends on several linker symbols to be present it is recommended to use the linker script provided when bulding the kernel.
 
-[![Travis-CI Status](https://api.travis-ci.org/RusPiRo/ruspiro-boot.svg?branch=master)](https://travis-ci.org/RusPiRo/ruspiro-boot)
+[![Travis-CI Status](https://api.travis-ci.com/RusPiRo/ruspiro-boot.svg?branch=master)](https://travis-ci.com/RusPiRo/ruspiro-boot)
 [![Latest Version](https://img.shields.io/crates/v/ruspiro-boot.svg)](https://crates.io/crates/ruspiro-boot)
 [![Documentation](https://docs.rs/ruspiro-boot/badge.svg)](https://docs.rs/ruspiro-boot)
 [![License](https://img.shields.io/crates/l/ruspiro-boot.svg)](https://github.com/RusPiRo/ruspiro-boot#license)
@@ -18,18 +18,16 @@ both architectures and the execution is tested on a Raspberry Pi 3 B+.
 
 Feature            | Purpose
 -------------------|--------------------------
-``with_panic``     | Implement a default panic handler
 ``singlecore``     | Keep all cores except one in a "parked" state so the runtime only uses a single core.
 ``ruspiro_pi3``    | This is passed to the dependend crates to ensure they will be build properly for this target device.
 
 ## Usage
 
 To use this crate simply add the following lines to your ``Cargo.toml`` file:
-(hint: git dependency as long as the crate is not registered at crates.io)
 
 ```toml
 [dependencies]
-ruspiro-boot = { version = "0.3", features = ["ruspiro_pi3", "with_panic"] }
+ruspiro-boot = "0.4"
 ```
 
 In the main rust file refer to this crate with this:
@@ -72,4 +70,4 @@ To get started you could check out the template projects [here](https://www.gith
 
 ## License
 
-Licensed under Apache License, Version 2.0, ([LICENSE](LICENSE) or http://www.apache.org/licenses/LICENSE-2.0)
+Licensed under Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0) or MIT ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)) at your choice.
