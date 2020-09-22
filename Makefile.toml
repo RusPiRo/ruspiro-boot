@@ -49,7 +49,12 @@ args = ["test", "--doc", "--features", "${FEATURES}"]
 [tasks.publish_dry]
 env = { FEATURES = "ruspiro_pi3" }
 command = "cargo"
-args = ["publish", "--dry-run", "--features", "${FEATURES}"]
+args = ["publish", "--dry-run", "--target", "${BUILD_TARGET}", "--features", "${FEATURES}"]
+
+[tasks.publish]
+env = { FEATURES = "ruspiro_pi3" }
+command = "cargo"
+args = ["publish", "--token", "${CRATES_TOKEN}", "--allow-dirty", "--target", "${BUILD_TARGET}", "--features", "${FEATURES}"]
 
 [tasks.clean]
 command = "cargo"

@@ -62,7 +62,7 @@ jobs:
         - rustup target add aarch64-unknown-none
         - rustup component add rust-src
         - rustup component add llvm-tools-preview
-      script: cargo publish --dry-run --target aarch64-unknown-none --features ruspiro_pi3
+      script: cargo make publish_try --profile travis
 
     - stage: prepare_release
       name: "Create PR against the release branch"
@@ -116,4 +116,4 @@ jobs:
         # also update the version in the lib.rs doc root url
         - sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' src/lib.rs
       # publish with token and dirty flag as we just updated some files and won't commit them back to the branch
-      script: cargo publish --token $CRATES_TOKEN --allow-dirty --target aarch64-unknown-none --features ruspiro_pi3
+      script: cargo make publish --env CRATES_TOKEN="$CRATES_TOKEN" > /dev/null
