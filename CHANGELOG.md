@@ -8,7 +8,7 @@
 
   - use a proper travis-ci pipeline setup
   - remove aarch32 support during boot up
-  - instead of the feature `singlecore` to prevent multicore boot up, the default is single-core and the feature `multicore` enables multi-core boot up
+  - instead of the feature `singlecore` to prevent multicore boot up, the default is now single-core and the feature `multicore` enables multi-core boot up
 
 ## :banana: v0.3.2
 

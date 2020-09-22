@@ -46,6 +46,11 @@ env = { FEATURES = "ruspiro_pi3" }
 command = "cargo"
 args = ["test", "--doc", "--features", "${FEATURES}"]
 
+[tasks.publish_dry]
+env = { FEATURES = "ruspiro_pi3" }
+command = "cargo"
+args = ["publish", "--dry-run", "--features", "${FEATURES}"]
+
 [tasks.clean]
 command = "cargo"
 args = ["clean"]

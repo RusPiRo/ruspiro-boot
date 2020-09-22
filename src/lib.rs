@@ -103,6 +103,10 @@ extern "C" {
 ///
 #[export_name = "__rust_entry"]
 fn __rust_entry(core: u32) -> ! {
+    // first step before going any further is to clean the L1 cache to ensure there
+    // is no garbage remaining that could impact actual execution once the cache is enabled.
+    // TODO: call L1 cache maintenance
+
     // jump to the function provided by the user of this crate
     #[cfg(not(test))]
     unsafe {
