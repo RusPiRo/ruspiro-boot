@@ -27,7 +27,7 @@ env = { FEATURES = "ruspiro_pi3,multicore" }
 run_task = "xbuild"
 
 [tasks.clippy]
-env = { FEATURES = "ruspiro_pi3" }
+env = { FEATURES = "ruspiro_pi3,multicore" }
 command = "cargo"
 args = ["clippy", "--target", "${BUILD_TARGET}", "--features", "${FEATURES}"]
 
@@ -42,7 +42,7 @@ command = "cargo"
 args = ["test", "--tests", "--features", "${FEATURES}"]
 
 [tasks.doctest]
-env = { FEATURES = "ruspiro_pi3" }
+env = { FEATURES = "ruspiro_pi3,multicore" }
 command = "cargo"
 args = ["test", "--doc", "--features", "${FEATURES}"]
 

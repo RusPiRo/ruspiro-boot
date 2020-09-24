@@ -9,7 +9,7 @@ for processing. Supports Aarch32 and Aarch64 builds.
 """
 license = "Apache-2.0"
 repository = "https://github.com/RusPiRo/ruspiro-boot/tree/v||VERSION||"
-documentation = "https://docs.rs/ruspiro-boot/0.3.2"
+documentation = "https://docs.rs/ruspiro-boot/||VERSION||"
 readme = "README.md"
 keywords = ["RusPiRo", "raspberrypi", "boot", "baremetal", "multicore"]
 categories = ["no-std", "embedded"]
@@ -19,7 +19,7 @@ build = "build.rs"
 exclude = [".travis.yml", "Makefile.toml"]
 
 [badges]
-travis-ci = { repository = "RusPiRo/ruspiro-boot", branch = "master" }
+travis-ci = { repository = "RusPiRo/ruspiro-boot", branch = "release" }
 maintenance = { status = "actively-developed" }
 is-it-maintained-open-issues = { repository = "RusPiRo/ruspiro-boot" }
 
@@ -30,7 +30,7 @@ cc = "1.0.59"
 
 [dependencies]
 ruspiro-register = "0.5"
-ruspiro-cache = "0.3"
+ruspiro-cache = "0.4"
 
 [features]
 ruspiro_pi3 = [ ]
@@ -38,11 +38,12 @@ multicore = [ ]
 
 # ensure the required features of the crate are active for the doc.rs build
 [package.metadata.docs.rs]
+targets = ["aarch64-unknown-none", "aarch64-unknown-linux-gnu"]
 features = [
     "ruspiro_pi3",
     "multicore"
 ]
 
 [patch.crates-io]
-ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git" }
-ruspiro-cache = { git = "https://github.com/RusPiRo/ruspiro-cache.git" }
+ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git", branch = "master" }
+ruspiro-cache = { git = "https://github.com/RusPiRo/ruspiro-cache.git", branch = "master" }

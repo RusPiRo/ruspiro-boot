@@ -2,7 +2,7 @@
 
 This crate provides basic boot code that - when build into a kernel crate - will be executed as soon as the Raspberry Pi powers up. As the building of this crate and finally linking into the kernel image depends on several linker symbols to be present it is recommended to use the linker script provided when bulding the kernel.
 
-[![Travis-CI Status](https://api.travis-ci.com/RusPiRo/ruspiro-boot.svg?branch=master)](https://travis-ci.com/RusPiRo/ruspiro-boot)
+[![Travis-CI Status](https://api.travis-ci.com/RusPiRo/ruspiro-boot.svg?branch=release)](https://travis-ci.com/RusPiRo/ruspiro-boot)
 [![Latest Version](https://img.shields.io/crates/v/ruspiro-boot.svg)](https://crates.io/crates/ruspiro-boot)
 [![Documentation](https://docs.rs/ruspiro-boot/badge.svg)](https://docs.rs/ruspiro-boot)
 [![License](https://img.shields.io/crates/l/ruspiro-boot.svg)](https://github.com/RusPiRo/ruspiro-boot#license)
@@ -18,7 +18,7 @@ both architectures and the execution is tested on a Raspberry Pi 3 B+.
 
 Feature            | Purpose
 -------------------|--------------------------
-``singlecore``     | Keep all cores except one in a "parked" state so the runtime only uses a single core.
+``multicore``      | Compiles the multi-core version of the crate, kicking off all 4 cores of the Raspberry Pi.
 ``ruspiro_pi3``    | This is passed to the dependend crates to ensure they will be build properly for this target device.
 
 ## Usage
@@ -27,7 +27,7 @@ To use this crate simply add the following lines to your ``Cargo.toml`` file:
 
 ```toml
 [dependencies]
-ruspiro-boot = "0.4"
+ruspiro-boot = "||VERSION||"
 ```
 
 In the main rust file refer to this crate with this:
@@ -40,8 +40,7 @@ extern crate ruspiro_boot;
 The usage of `extern crate` is mandatory to ensure the boot strapping is properly linked into the
 final binary.
 
-To successfully build a bare metal binary using this crate for the boot strapping part it is **highly recomended** to use the linker script provided by this crate. Based on the target architecture to be built it is either [link32.ld](link32.ld) or [link64.ld](link64.ld).
-To conviniently refer to the linker scripts contained in this crate it's recommended to use a specific build script in your project that copies the required file to your current project folder and could then be referred to with the ``RUSTFLAG`` ``-C link-arg=-T./link<aarch>.ld``.
+To successfully build a bare metal binary using this crate for the boot strapping part it is **highly recomended** to use the linker script [link64.ld](link64.ld) provided by this crate. To conviniently refer to the linker script contained in this crate it's recommended to use a specific build script in your project that copies the required file to your current project folder and could then be referred to with the ``RUSTFLAG`` ``-C link-arg=-T./link64.ld``.
 The build script is a simple ``build.rs`` rust file in your project root with the following contents:
 
 ```rust
@@ -66,7 +65,7 @@ fn main() {
 }
 ```
 
-To get started you could check out the template projects [here](https://www.github.com/RusPiRo/ruspiro_templates)
+To get started you may want to check out the template projects provided [here](https://www.github.com/RusPiRo/ruspiro_templates)
 
 ## License
 

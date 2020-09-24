@@ -7,6 +7,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ef611cc68ff783f18535d77ddd080185275713d852c4f5cbb6122c462a7a825c"
 
 [[package]]
+name = "ruspiro-arch-aarch64"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42bc340c120817a0bb38de335053c53a4db8c4ec01dee83cb50148932bcbb34f"
+dependencies = [
+ "ruspiro-register",
+]
+
+[[package]]
 name = "ruspiro-boot"
 version = "0.3.2"
 dependencies = [
@@ -17,13 +26,14 @@ dependencies = [
 
 [[package]]
 name = "ruspiro-cache"
-version = "0.3.1"
-source = "git+https://github.com/RusPiRo/ruspiro-cache.git#0f949693077c1c88b3dcd31feaab91bf70108a6e"
+version = "0.4.0"
+source = "git+https://github.com/RusPiRo/ruspiro-cache.git?branch=master#20c80b07071c864310ae6e4eb5e1d697f8118e30"
 dependencies = [
  "cc",
+ "ruspiro-arch-aarch64",
 ]
 
 [[package]]
 name = "ruspiro-register"
 version = "0.5.0"
-source = "git+https://github.com/RusPiRo/ruspiro-register.git#e4e0f8590193e880b53d7a92c3f4aba5e9980f1b"
+source = "git+https://github.com/RusPiRo/ruspiro-register.git?branch=master#e4e0f8590193e880b53d7a92c3f4aba5e9980f1b"

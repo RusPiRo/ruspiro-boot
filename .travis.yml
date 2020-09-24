@@ -41,17 +41,17 @@ jobs:
     - stage: test
       name: "Run Doc Tests"
       install:
-        - rustc --print cfg
+        - cargo install cargo-make 
         # if we not build a PR we remove the patch of the dependencies to their github repo's
         - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
-      script: cargo test --doc --features ruspiro_pi3
+      script: cargo make doctest --profile dummy
     - stage: test
       name: "Run Unit Tests"
       install:
-        - rustc --print cfg
+        - cargo install cargo-make 
         # if we not build a PR we remove the patch of the dependencies to their github repo's
         - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
-      script: cargo test --tests --features ruspiro_pi3
+      script: cargo make unittest --profile dummy
 
     - stage: publish_dry
       name: "Run Cargo Publish Dry-Run"
@@ -62,7 +62,7 @@ jobs:
         - rustup target add aarch64-unknown-none
         - rustup component add rust-src
         - rustup component add llvm-tools-preview
-      script: cargo make publish_try --profile travis
+      script: cargo make publish_dry --profile travis
 
     - stage: prepare_release
       name: "Create PR against the release branch"
@@ -115,5 +115,7 @@ jobs:
         - sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' Cargo.toml
         # also update the version in the lib.rs doc root url
         - sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' src/lib.rs
+        # and the README.md
+        - sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' README.md
       # publish with token and dirty flag as we just updated some files and won't commit them back to the branch
       script: cargo make publish --env CRATES_TOKEN="$CRATES_TOKEN" > /dev/null
