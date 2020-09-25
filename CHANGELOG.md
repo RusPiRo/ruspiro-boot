@@ -9,6 +9,7 @@
   - use a proper travis-ci pipeline setup
   - remove aarch32 support during boot up
   - instead of the feature `singlecore` to prevent multicore boot up, the default is now single-core and the feature `multicore` enables multi-core boot up
+  - a conditional compilation flag ensures this crate does only build with useful content if the target architecture is *Aarch64*
 
 ## :banana: v0.3.2
 

@@ -11,6 +11,9 @@ rust:
 # build nightly only for the time beeing
   - nightly
 
+# increase build speed by caching installed cargo dependencies
+cache: cargo
+
 # define the stages and their order
 stages:
   - compile

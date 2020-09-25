@@ -7,6 +7,8 @@
 #![doc(html_root_url = "https://docs.rs/ruspiro-boot/||VERSION||")]
 #![cfg_attr(not(any(test, doctest)), no_std)]
 #![feature(llvm_asm, lang_items, linkage)]
+// this crate does only compile with valid content if the target architecture is AARCH64!
+#![cfg(target_arch = "aarch64")]
 
 //! # RusPiRo Bootstrapping for Raspberry Pi
 //!
@@ -82,6 +84,7 @@
 //!
 
 use core::ptr;
+use ruspiro_cache as cache;
 pub mod macros;
 pub use self::macros::*;
 
@@ -102,16 +105,14 @@ extern "C" {
 /// in EL1(aarch64) or SVC(aarch32) mode
 ///
 #[export_name = "__rust_entry"]
-fn __rust_entry(core: u32) -> ! {
+unsafe fn __rust_entry(core: u32) -> ! {
     // first step before going any further is to clean the L1 cache to ensure there
     // is no garbage remaining that could impact actual execution once the cache is enabled.
-    // TODO: call L1 cache maintenance
+    cache::invalidate_dcache();
 
     // jump to the function provided by the user of this crate
     #[cfg(not(test))]
-    unsafe {
-        __kernel_startup(core)
-    }
+    __kernel_startup(core);
 
     // once the one-time startup of this core has been done kickoff any other core
     #[cfg(feature = "multicore")]
@@ -119,9 +120,7 @@ fn __rust_entry(core: u32) -> ! {
 
     // after the one time setup enter the processing loop
     #[cfg(not(test))]
-    unsafe {
-        __kernel_run(core)
-    }
+    __kernel_run(core);
 
     #[cfg(test)]
     loop {}
@@ -140,9 +139,9 @@ fn kickoff_next_core(core: u32) {
     };
     unsafe {
         ptr::write_volatile(jump_store as *mut u64, 0x80000); //__boot as *const () as u64);
-                                                                    // as this core may have caches enabled, clean/invalidate so the other core
-                                                                    // sees the correct data on memory and the write does not only hit the cache
-        //cache::cleaninvalidate();
+        // as this core may have caches enabled, flush it so the other core
+        // sees the correct data on memory and the write does not only hit the cache
+        cache::flush_dcache_range(0xe0, 0x10);
         llvm_asm!("sev"); // trigger an event to wake up the sleeping cores
     }
 }
