@@ -121,4 +121,4 @@ jobs:
         # and the README.md
         - sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' README.md
       # publish with token and dirty flag as we just updated some files and won't commit them back to the branch
-      script: cargo make publish --env CRATES_TOKEN="$CRATES_TOKEN" > /dev/null
+      script: cargo make publish --profile travis --env CRATES_TOKEN="$CRATES_TOKEN" > /dev/null
