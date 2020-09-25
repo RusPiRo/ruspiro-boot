@@ -1,14 +1,16 @@
 /***********************************************************************************************************************
- * Copyright (c) 2019 by the authors
+ * Copyright (c) 2020 by the authors
  *
- * Author: André Borrmann
- * License: Apache License 2.0
+ * Author: André Borrmann <pspwizard@gmx.de>
+ * License: Apache License 2.0 / MIT
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-boot/0.3.2")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-boot/||VERSION||")]
 #![cfg_attr(not(any(test, doctest)), no_std)]
 #![feature(llvm_asm, lang_items, linkage)]
+// this crate does only compile with valid content if the target architecture is AARCH64!
+#![cfg(target_arch = "aarch64")]
 
-//! # RusPiRo Boot Strapping for Raspberry Pi
+//! # RusPiRo Bootstrapping for Raspberry Pi
 //!
 //! This crates provides the startup routines that are needed to be run from a baremetal kernel on
 //! the RaspberryPi before execution could be handed over to Rust code.
@@ -38,26 +40,24 @@
 //! final binary. To use the linker script that is provided as part of this crate in
 //! your own rust binary crate you could either copy them manually from the git repository based on
 //! your desired target architecture for the build:
-//! [aarch32 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.2/link32.ld)
-//! [aarch64 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v0.3.2/link64.ld)
+//! [aarch64 linker script](https://github.com/RusPiRo/ruspiro-boot/blob/v||VERSION||/link64.ld)
 //!
 //! # Features
 //!
 //! Feature         | Description
 //! ----------------|------------------------------------------------------------------------------
 //! ``ruspiro_pi3`` | Passed to dependent crates to ensure  proper MMIO base memory address for Raspberry Pi 3 when accessing the peripherals
-//! ``singlecore``  | Enforces the compilation of the single core boot sequence. Only the main core 0 is then running.
-//! ``with_panic``  | Compiles a default simple panic handler into the crate. This will hang the core that paniced. No unwinding is performed
+//! ``multicore``  | Enables the compilation of the multi core boot sequence. Without it only the main core 0 is running.
 //!
 //! ## Hint:
 //! To successfully build a bare metal binary/kernel that depends on this one to perform the boot
-//! strapping part it is **highly recomended** to use the linker script provided by this crate. Based
-//! on the target architecture to be built it is either [link32.ld](link32.ld) or [link64.ld](link64.ld).
+//! strapping part it is **highly recomended** to use the linker script [link64.ld](link64.ld) provided by this crate.
 //! To conviniently refer to the linker scripts contained in this crate it's recommended to use a
 //! specific build script in your project that copies the required file to your current project
-//! folder and could then be referred to with the `RUSTFLAG` parameter `-C link-arg=-T./link<aarch>.ld`.
+//! folder and could then be referred to with the `RUSTFLAG` parameter `-C link-arg=-T./link64.ld`.
 //! The build script is a simple `build.rs` rust file in your project root with the following
 //! contents:
+//!
 //! ```no_run
 //! use std::{env, fs, path::Path};
 //!
@@ -83,26 +83,14 @@
 //! To get started you could check out the template projects [here](https://www.github.com/RusPiRo/ruspiro_templates)
 //!
 
+use core::ptr;
+use ruspiro_cache as cache;
 pub mod macros;
 pub use self::macros::*;
 
-#[cfg_attr(target_arch = "aarch64", path = "mmu64.rs")]
-#[cfg_attr(target_arch = "arm", path = "mmu32.rs")]
-mod mmu;
-
-#[cfg(not(any(test, doctest)))]
-mod panic;
-#[cfg(not(any(test, doctest)))]
-mod stubs;
-
-#[cfg(all(target_arch = "aarch64", not(feature = "singlecore")))]
-use ruspiro_cache as cache;
-
-use ruspiro_console::*;
-use ruspiro_interrupt::IRQ_MANAGER;
-use ruspiro_mailbox::*;
-use ruspiro_timer as timer;
-use ruspiro_uart::Uart1;
+// TODO: verify if the stubs are really required
+//#[cfg(not(any(test, doctest)))]
+//mod stubs;
 
 extern "C" {
     fn __kernel_startup(core: u32);
@@ -117,83 +105,29 @@ extern "C" {
 /// in EL1(aarch64) or SVC(aarch32) mode
 ///
 #[export_name = "__rust_entry"]
-fn __rust_entry(core: u32) -> ! {
-    // very first thing is to setup the MMU which allows us to
-    // use atomic operations in the upcomming initialization
-    #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
-    mmu::initialize_mmu(core);
-    // special additional setup might be done on the main core only
-    if core == 0 {
-        // get the current core clock rate to initialize the Uart1 with
-        let core_rate = MAILBOX
-            .take_for(|mb: &mut Mailbox| mb.get_clockrate(ClockId::Core))
-            .unwrap_or(250_000_000);
-        // first thing we would like to do is to let the outside world know that we are booting
-        // so if this is core 0 we initialze the uart1 interface with default settings and print some
-        // string
-        let mut uart = Uart1::new();
+unsafe fn __rust_entry(core: u32) -> ! {
+    // first step before going any further is to clean the L1 cache to ensure there
+    // is no garbage remaining that could impact actual execution once the cache is enabled.
+    cache::invalidate_dcache();
 
-        let _ = uart.initialize(core_rate, 115_200);
-        CONSOLE.take_for(|console| console.replace(uart));
-
-        #[cfg(target_arch = "aarch64")]
-        println!("\r\n########## RusPiRo ----- Bootstrapper v0.3 @ Aarch64 ----- ##########");
-        #[cfg(target_arch = "arm")]
-        println!("\r\n########## RusPiRo ----- Bootstrapper v0.3 @ Aarch32 ----- ##########");
-
-        // do some arbitrary sleep here to let the uart send the initial greetings before running
-        // the kernel, which may initialize the UART for it's own purpose and this would break
-        // this transfer...
-        timer::sleep(timer::Useconds(10000));
-
-        // configure interrupt manager for further usage
-        IRQ_MANAGER.take_for(|mgr| mgr.initialize());
-    }
-
-    // now follows the configuration that is needed to be done by all cores
-    // TODO: is there something we need to prepare ?
-
-    // now that the initialization was done we can jump into the "application"
-    // specific initialization
+    // jump to the function provided by the user of this crate
     #[cfg(not(test))]
-    unsafe {
-        __kernel_startup(core)
-    }
+    __kernel_startup(core);
 
     // once the one-time startup of this core has been done kickoff any other core
-    #[cfg(all(
-        any(target_arch = "arm", target_arch = "aarch64"),
-        not(feature = "singlecore")
-    ))]
+    #[cfg(feature = "multicore")]
     kickoff_next_core(core);
 
-    // after the one time setup of the "application" enter the processing loop
+    // after the one time setup enter the processing loop
     #[cfg(not(test))]
-    unsafe {
-        __kernel_run(core)
-    }
+    __kernel_run(core);
 
     #[cfg(test)]
     loop {}
 }
 
-#[cfg(all(target_arch = "arm", not(feature = "singlecore")))]
-fn kickoff_next_core(core: u32) {
-    // kicking of another core in arch32 means, writing the jump address for this
-    // core into it's specific mailbox
-    let jump_store: u64 = match core {
-        0 => 0x4000_009C, // write start address to core 1 mailbox 3
-        1 => 0x4000_00AC, // write start address to core 2 mailbox 3
-        2 => 0x4000_00BC, // write start address to core 3 mailbox 3
-        _ => return,
-    };
-    unsafe {
-        core::ptr::write_volatile(jump_store as *mut u32, __boot as *const () as u32);
-        llvm_asm!("sev"); // trigger an event to wake up the sleeping cores
-    }
-}
 
-#[cfg(all(target_arch = "aarch64", not(feature = "singlecore")))]
+#[cfg(feature = "multicore")]
 fn kickoff_next_core(core: u32) {
     // kicking of another core in arch64 means, writing the jump address for this
     // core into a specific memory location
@@ -204,10 +138,10 @@ fn kickoff_next_core(core: u32) {
         _ => return,
     };
     unsafe {
-        core::ptr::write_volatile(jump_store as *mut u64, 0x80000); //__boot as *const () as u64);
-                                                                    // as this core may have caches enabled, clean/invalidate so the other core
-                                                                    // sees the correct data on memory and the write does not only hit the cache
-        cache::cleaninvalidate();
+        ptr::write_volatile(jump_store as *mut u64, 0x80000); //__boot as *const () as u64);
+        // as this core may have caches enabled, flush it so the other core
+        // sees the correct data on memory and the write does not only hit the cache
+        cache::flush_dcache_range(0xe0, 0x10);
         llvm_asm!("sev"); // trigger an event to wake up the sleeping cores
     }
 }
