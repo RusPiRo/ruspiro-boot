@@ -1,17 +1,16 @@
 [package]
 name = "ruspiro-boot"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.3.2" # remember to update html_root_url
+version = "0.4.0" # remember to update html_root_url
 description = """
-Baremetal boot strapper code for the Raspberry Pi 3 to conviniently start a custom kernel within the Rust environment
-without the need to deal with all the initial setup like stack pointers, getting MMU setup and get all cores kicked off 
-for processing. Supports Aarch32 and Aarch64 builds.
+Bare metal boot strapper code for the Raspberry Pi 3 to conviniently start a custom kernel within the Rust environment
+without the need to deal with all the initial setup like stack pointers, switch to the appropriate exeption level and getting all cores kicked off for processing of code compiled from Rust.
 """
 license = "Apache-2.0"
 repository = "https://github.com/RusPiRo/ruspiro-boot/tree/v||VERSION||"
 documentation = "https://docs.rs/ruspiro-boot/||VERSION||"
 readme = "README.md"
-keywords = ["RusPiRo", "raspberrypi", "boot", "baremetal", "multicore"]
+keywords = ["RusPiRo", "aarch64", "boot", "baremetal", "multicore"]
 categories = ["no-std", "embedded"]
 edition = "2018"
 links = "ruspiro_boot"
