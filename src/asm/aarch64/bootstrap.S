@@ -1,4 +1,4 @@
-/***************************************************************************************************
+/***********************************************************************************************************************
  * Raspberry Pi bootstrap code.
  * This is the minimal preparation to brach into the "Rust" code line for further initialization
  * and setup for the current kernel to be run at the Raspberry Pi.
@@ -10,11 +10,13 @@
  * 4. The start address of the entry point is 0x8_0000 which has to be ensured by the linker script
  *
  *
- * Copyright (c) 2019 by the authors
+ ***********************************************************************************************************************
+ * Copyright (c) 2020 by the authors
  *
- * Author: André Borrmann
- * License: Apache License 2.0
- **************************************************************************************************/
+ * Author: André Borrmann <pspwizard@gmx.de>
+ * License: Apache License 2.0 / MIT
+ **********************************************************************************************************************/
+
  .global __boot // global entry point
  .global __hang // helper to savely "hang" a core with nothing else to do
 

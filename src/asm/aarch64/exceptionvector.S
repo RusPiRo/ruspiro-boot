@@ -1,12 +1,10 @@
-/***************************************************************************************************
- * definition of the exception vector table 
+/***********************************************************************************************************************
+ * Copyright (c) 2020 by the authors
  *
- *
- * Copyright (c) 2019 by the authors
- *
- * Author: André Borrmann
- * License: Apache License 2.0
- **************************************************************************************************/
+ * Author: André Borrmann <pspwizard@gmx.de>
+ * License: Apache License 2.0 / MIT
+ **********************************************************************************************************************/
+
 .global __ExceptionVectorTable
 
 // specify the constants used to passed to the generic exception handler to identify

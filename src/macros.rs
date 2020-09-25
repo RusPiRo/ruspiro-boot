@@ -1,8 +1,8 @@
 /***********************************************************************************************************************
- * Copyright (c) 2019 by the authors
+ * Copyright (c) 2020 by the authors
  *
- * Author: André Borrmann
- * License: Apache License 2.0
+ * Author: André Borrmann <pspwizard@gmx.de>
+ * License: Apache License 2.0 / MIT
  **********************************************************************************************************************/
 
 //! # Macros
@@ -12,8 +12,9 @@
 
 /// Use this macro to define the your custom one-time-initialization entry point function to be used once the mandatory
 /// boot process has finished and the processing is handed over to the high level rust code. As each core will come
-/// come alive **one after another**, this function is called with the core it's running on. The next core comes alive
-/// after the actual one finished processing this function
+/// alive **one after another**, this function is called with the core id/number it's running on. The next core comes 
+/// alive after the actual one finished processing this function, it is guaranteed that the cores will come alive in 
+/// sequence!
 ///
 /// # Example
 /// ```ignore
@@ -26,7 +27,6 @@
 /// ```
 #[macro_export]
 macro_rules! come_alive_with {
-    // macro used with a path given to it matches this branch
     ($path:path) => {
         // in this case the macro expends to an library export symbol called __kernel_startup
         // this function is called from the boot up sequence
@@ -40,7 +40,7 @@ macro_rules! come_alive_with {
 
 /// Use this macro to define the never-returning processing entry point function to be used for the processing
 /// after all one-time initializations have been done. This function is intended to never return and is executed
-/// on each core individually. Therefore this function is called with the core number it's running on.
+/// on each core individually. Therefore this function is called with the core id/number it's running on.
 ///
 /// # Example
 /// ```ignore
