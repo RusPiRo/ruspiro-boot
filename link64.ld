@@ -19,9 +19,6 @@ SECTIONS
 	    
     .text : { KEEP(*(.text.boot)) *(.text*) }
     .rodata : { *(.rodata*) }
-	PROVIDE(_data = .);
-    .data : { *(.data*) }
-    
 	. = ALIGN(8);
     .init_array : {
 		__init_start = .;
@@ -29,7 +26,6 @@ SECTIONS
 		*(.init_array.*)
 		__init_end = .;
 	}
-    
     /* bss section, contains all static variables of the c code */
     .bss : { 
     	__bss_start__ = .;
@@ -37,6 +33,8 @@ SECTIONS
     	*(COMMON)
     	__bss_end__ = .;
     }
+	PROVIDE(_data = .);
+    .data : { *(.data*) }
 
 	/* fill the binary to always have an aligned binary size - needed for the bootloader on RPi to work properly */
 	.fill : {
