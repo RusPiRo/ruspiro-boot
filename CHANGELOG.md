@@ -1,5 +1,13 @@
 # Changelog
 
+## :strawberry: v0.4.1
+
+  Fxing the linker script. Some of the section requires re-ordering to properly link with new versions of LLVM/LLD used in the current rustc version.
+
+- ### :detective: Fixes
+
+  - re-order sections in the linker script file
+
 ## :peach: v0.4.0
 
   Refactoring the crate into a more lightweight 64Bit only version. This now provides a tailormade lean implementation to boot up the Raspberry Pi either in *multicore* or *singlecore* setup. The boot sequence hands processing to an entry functions that needs to be implemented by the user of this crate. The implementer of this entry point function does have now full freedom where to go from here. As part of the boot sequence there is nomore a forced setup of the MMU or any other peripheral.
