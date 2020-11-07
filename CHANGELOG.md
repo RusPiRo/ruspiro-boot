@@ -1,5 +1,13 @@
 # Changelog
 
+## :strawberry: v0.4.2
+
+  Prepare the boot crate to be used in the custom test framework as well.
+
+- ### :bulb: Features
+
+  - introduce a new feature `test` to control compilation when the boot crate is used for the custon test framework.
+
 ## :strawberry: v0.4.1
 
   Fxing the linker script. Some of the section requires re-ordering to properly link with new versions of LLVM/LLD used in the current rustc version.
