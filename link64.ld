@@ -68,4 +68,9 @@ SECTIONS
 	__heap_start = .;
     /* heap end is defined by the usage split of arm/gpu - set this to a fixed value for the time beeing */
 	__heap_end = 0x3E000000;
+
+	/DISCARD/ :
+	{
+		*(.note.gnu*)
+	}
 }
