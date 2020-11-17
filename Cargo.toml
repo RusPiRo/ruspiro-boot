@@ -34,7 +34,6 @@ ruspiro-cache = "0.4"
 [features]
 ruspiro_pi3 = [ ]
 multicore = [ ]
-test = [ ]
 
 # ensure the required features of the crate are active for the doc.rs build
 [package.metadata.docs.rs]
