@@ -20,7 +20,6 @@ Feature          | Purpose
 -----------------|--------------------------
 `multicore`      | Compiles the multi-core version of the crate, kicking off all 4 cores of the Raspberry Pi.
 `ruspiro_pi3`    | This is passed to the dependend crates to ensure they will be build properly for this target device.
-`test`           | Use this feature only if the crate is used as *dev-dependency* and is intended to be used to boot the custom test framework test runner.
 
 ## Usage
 

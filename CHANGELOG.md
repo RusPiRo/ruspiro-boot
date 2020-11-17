@@ -2,11 +2,11 @@
 
 ## :strawberry: v0.4.2
 
-  Prepare the boot crate to be used in the custom test framework as well.
+Adjust the linker script to discard specific sections. With the sections in place build on travis for the custom unit test framework lead to a wrong start memory address for the kernel used with *QEMU*.
 
-- ### :bulb: Features
+- ### :detective: Fixes
 
-  - introduce a new feature `test` to control compilation when the boot crate is used for the custon test framework.
+  - Discard `*.note.gnu*` section in the linker script.
 
 ## :strawberry: v0.4.1
 

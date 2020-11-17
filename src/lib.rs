@@ -104,7 +104,6 @@ extern "C" {
 /// `come_alive_with!` and `run_with!`. This entry point is assumed to be always called
 /// in EL1(aarch64) or SVC(aarch32) mode
 ///
-#[cfg(not(feature = "test"))]
 #[export_name = "__rust_entry"]
 unsafe fn __rust_entry(core: u32) -> ! {
     // first step before going any further is to clean the L1 cache to ensure there
