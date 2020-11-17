@@ -1,5 +1,13 @@
 # Changelog
 
+## :strawberry: v0.4.2
+
+Adjust the linker script to discard specific sections. With the sections in place build on travis for the custom unit test framework lead to a wrong start memory address for the kernel used with *QEMU*.
+
+- ### :detective: Fixes
+
+  - Discard `*.note.gnu*` section in the linker script.
+
 ## :strawberry: v0.4.1
 
   Fxing the linker script. Some of the section requires re-ordering to properly link with new versions of LLVM/LLD used in the current rustc version.
