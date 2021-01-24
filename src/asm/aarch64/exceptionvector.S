@@ -30,10 +30,8 @@
  * default exception handler that does nothing for the time beeing
  * parameter passed: type, esr, spsr, far, elr
  **************************************************************************************************/
-.weak __exception_handler_default
-__exception_handler_default:
-    nop
-    ret
+.global __exception_handler_default
+
 
 /***************************************************************************************************
  * generic exception handler trampoline
