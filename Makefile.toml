@@ -36,3 +36,13 @@ run_task = "build"
 [tasks.clean]
 command = "cargo"
 args = ["clean"]
+
+[tasks.publish_dry]
+env = { FEATURES = "" }
+command = "cargo"
+args = ["publish", "--dry-run", "--features", "${FEATURES}"]
+
+[tasks.publish]
+env = { FEATURES = "" }
+command = "cargo"
+args = ["publish", "--token", "${CRATES_TOKEN}", "--allow-dirty", "--features", "${FEATURES}"]
