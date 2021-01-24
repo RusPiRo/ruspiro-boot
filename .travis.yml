@@ -1,8 +1,8 @@
-# build only master branch on commit's
+# build only development branch on commit's
 # all other branches build on PullRequest creation
 branches:
   only:
-    - master
+    - development
     - release
 
 language: rust
@@ -17,10 +17,9 @@ cache: cargo
 # define the stages and their order
 stages:
   - compile
-  - test
   - publish_dry
   - name: prepare_release
-    if: branch = master AND type != pull_request
+    if: branch = development AND type != pull_request
   - name: deploy
     if: branch = release AND type != pull_request
   - name: publish
@@ -41,21 +40,6 @@ jobs:
         - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
       script: cargo make --profile travis pi3
 
-    - stage: test
-      name: "Run Doc Tests"
-      install:
-        - cargo install cargo-make 
-        # if we not build a PR we remove the patch of the dependencies to their github repo's
-        - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
-      script: cargo make doctest --profile dummy
-    - stage: test
-      name: "Run Unit Tests"
-      install:
-        - cargo install cargo-make 
-        # if we not build a PR we remove the patch of the dependencies to their github repo's
-        - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sed -i "/{^\[patch\.crates-io\] /{:a;N;/\Z}/!ba};/^ruspiro-.*\(git\|path\).*/d" Cargo.toml; fi'
-      script: cargo make unittest --profile dummy
-
     - stage: publish_dry
       name: "Run Cargo Publish Dry-Run"
       install:
@@ -70,11 +54,11 @@ jobs:
     - stage: prepare_release
       name: "Create PR against the release branch"
       script:
-        - 'curl -H ''Authorization: Token ''"$GIT_API_TOKEN"'''' -X POST -H ''Content-type: application/json'' --data ''{"title":"Prepare Release and crates.io publishing", "head":"master", "base":"release", "draft":false, "body":"Automatic PR to the release branch as preperation to publish the library"}'' https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls > /dev/null'
+        - 'curl -H ''Authorization: Token ''"$GIT_API_TOKEN"'''' -X POST -H ''Content-type: application/json'' --data ''{"title":"Prepare Release and crates.io publishing", "head":"development", "base":"release", "draft":false, "body":"Automatic PR to the release branch as preperation to publish the library"}'' https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls > /dev/null'
 
     - stage: deploy
       name: "Create GitHub release"
-      
+      script: echo "creating github release"
       before_deploy:
         # extract current crate version from argo.toml
         - export CRATE_VERSION=v`sed -En 's/^version.*=.*\"(.*)\".*$/\1/p' < Cargo.toml`
