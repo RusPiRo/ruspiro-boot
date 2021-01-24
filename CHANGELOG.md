@@ -1,5 +1,15 @@
 # Changelog
 
+## :cat: v0.5.0
+
+Incorporate the basic excpetion handling within the boot loading crate instead of delegating the whole stuff to the `ruspiro-interrupt` crate. Now only the interrupt and fast-interrupt related exeptions will be delegated to an external crate that implements and exports this function: `extern "C" fn __isr_default() {}`.
+
+- ### :bulb: Features
+
+  - Bake the basic exception handling into this crate (e.g. aborts, SVCor HVC calls, instruction exceptions etc)
+  - Delegate IRQ and FIQ to an external crate
+  - Use the `log` crate to use it's logging macros to create log entries in case of exception events.
+
 ## :strawberry: v0.4.2
 
 Adjust the linker script to discard specific sections. With the sections in place build on travis for the custom unit test framework lead to a wrong start memory address for the kernel used with *QEMU*.
