@@ -1,60 +1,37 @@
 #***********************************************************************************************************************
 # cargo make tasks to build the example for the Raspberry Pi
 #***********************************************************************************************************************
-
-# AARCH64 specific profile environment varialbles
 [env.development]
 CC = "aarch64-none-elf-gcc"
 AR = "aarch64-none-elf-ar"
+OCOPY = "aarch64-none-elf-objcopy"
 CFLAGS = "-march=armv8-a -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mtune=cortex-a53"
-RUSTFLAGS = "-C linker=${CC} -C target-cpu=cortex-a53 -C link-arg=-nostartfiles -C link-arg=-T./link64.ld"
-BUILD_TARGET = "aarch64-unknown-none"
+RUSTFLAGS = "-C target-cpu=cortex-a53 -C target-feature=+strict-align,+a53,+fp-armv8,+neon -C link-arg=-T./link64.ld"
 
-# AARCH64 specific Travis CI env. variables. "aarch64-none-elf" is not available there as it seems
 [env.travis]
 CC = "aarch64-linux-gnu-gcc"
 AR = "aarch64-linux-gnu-ar"
+OCOPY = "aarch64-linux-gnu-objcopy"
 CFLAGS = "-march=armv8-a -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mtune=cortex-a53"
-RUSTFLAGS = "-C linker=${CC} -C target-cpu=cortex-a53 -C link-arg=-nostartfiles -C link-arg=-T./link64.ld"
-BUILD_TARGET = "aarch64-unknown-none"
+RUSTFLAGS = "-C target-cpu=cortex-a53 -C target-feature=+strict-align,+a53,+fp-armv8,+neon -C link-arg=-T./link64.ld"
 
-[tasks.xbuild]
+[tasks.build]
 command = "cargo"
-args = ["xbuild", "--target", "${BUILD_TARGET}", "--release", "--features", "${FEATURES}"]
-
-[tasks.pi3]
-env = { FEATURES = "ruspiro_pi3,multicore" }
-run_task = "xbuild"
+args = ["build", "--release", "--features", "${FEATURES}"]
 
 [tasks.clippy]
-env = { FEATURES = "ruspiro_pi3,multicore" }
+env = { FEATURES = "" }
 command = "cargo"
-args = ["clippy", "--target", "${BUILD_TARGET}", "--features", "${FEATURES}"]
+args = ["clippy", "--features", "${FEATURES}"]
 
 [tasks.doc]
-env = { FEATURES = "ruspiro_pi3,multicore" }
+env = { FEATURES = "" }
 command = "cargo"
-args = ["doc", "--target", "${BUILD_TARGET}", "--features", "${FEATURES}", "--open"]
+args = ["doc", "--features", "${FEATURES}", "--open"]
 
-[tasks.unittest]
-env = { FEATURES = "ruspiro_pi3,multicore" }
-command = "cargo"
-args = ["test", "--tests", "--features", "${FEATURES}"]
-
-[tasks.doctest]
-env = { FEATURES = "ruspiro_pi3,multicore" }
-command = "cargo"
-args = ["test", "--doc", "--features", "${FEATURES}"]
-
-[tasks.publish_dry]
-env = { FEATURES = "ruspiro_pi3" }
-command = "cargo"
-args = ["publish", "--dry-run", "--target", "${BUILD_TARGET}", "--features", "${FEATURES}"]
-
-[tasks.publish]
-env = { FEATURES = "ruspiro_pi3" }
-command = "cargo"
-args = ["publish", "--token", "${CRATES_TOKEN}", "--allow-dirty", "--target", "${BUILD_TARGET}", "--features", "${FEATURES}"]
+[tasks.pi3]
+env = { FEATURES = "" }
+run_task = "build"
 
 [tasks.clean]
 command = "cargo"
