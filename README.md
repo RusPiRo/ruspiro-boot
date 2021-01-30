@@ -2,7 +2,7 @@
 
 This crate provides basic boot code that - when build into a kernel crate - will be executed as soon as the Raspberry Pi powers up. Building and finally linking this crate into the kernel image depends on several linker symbols to be present. Therfore, it is recommended to use the linker script provided when bulding the kernel.
 
-[![Travis-CI Status](https://api.travis-ci.com/RusPiRo/ruspiro-boot.svg?branch=release)](https://travis-ci.com/RusPiRo/ruspiro-boot)
+![CI](https://github.com/RusPiRo/ruspiro-boot/workflows/CI/badge.svg?branch=development)
 [![Latest Version](https://img.shields.io/crates/v/ruspiro-boot.svg)](https://crates.io/crates/ruspiro-boot)
 [![Documentation](https://docs.rs/ruspiro-boot/badge.svg)](https://docs.rs/ruspiro-boot)
 [![License](https://img.shields.io/crates/l/ruspiro-boot.svg)](https://github.com/RusPiRo/ruspiro-boot#license)
