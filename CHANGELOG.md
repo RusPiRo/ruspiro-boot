@@ -1,5 +1,9 @@
 # Changelog
 
+## :cat: v0.5.1
+
+Migrate the actual travis-ci build pipeline to github actions
+
 ## :cat: v0.5.0
 
 Incorporate the basic excpetion handling within the boot loading crate instead of delegating the whole stuff to the `ruspiro-interrupt` crate. Now only the interrupt and fast-interrupt related exeptions will be delegated to an external crate that implements and exports this function: `extern "C" fn __isr_default() {}`.
