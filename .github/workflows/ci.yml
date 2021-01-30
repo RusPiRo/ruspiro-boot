@@ -55,6 +55,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: Install aarch64 gcc toolchain
+        run: sudo apt-get install -y gcc-aarch64-linux-gnu
+
       - name: Install Rust Nightly and Cargo
         uses: actions-rs/toolchain@v1
         with:
@@ -70,7 +73,7 @@ jobs:
           version: 'latest'
         
       - name: Publish-Dry-Run
-        run: cargo make publish_dry
+        run: cargo make publish_dry --profile pipeline
 
   prepare_release:
     needs: [build, publish_dry]
@@ -138,6 +141,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: Install aarch64 gcc toolchain
+        run: sudo apt-get install -y gcc-aarch64-linux-gnu
+
       - name: Install Rust Nightly and Cargo
         uses: actions-rs/toolchain@v1
         with:
@@ -165,4 +171,4 @@ jobs:
           sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' README.md
         
       - name: Publish-Dry-Run
-        run: cargo make publish --env CRATES_TOKEN=${{ secrets.CRATES_TOKEN }}
+        run: cargo make publish --env CRATES_TOKEN=${{ secrets.CRATES_TOKEN }} --profile pipeline
