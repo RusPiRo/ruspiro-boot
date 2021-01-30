@@ -44,7 +44,7 @@ jobs:
           cat Cargo.toml
 
       - name: Compile
-        run: cargo make pi3
+        run: cargo make pi3 --profile pipeline
 
   publish_dry:
     name: Run Cargo Publish Dry-Run
