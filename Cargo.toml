@@ -44,7 +44,5 @@ features = [
 ]
 
 [patch.crates-io]
-ruspiro-register = { path = "../ruspiro-register" }
-ruspiro-arch-aarch64 = { path = "../ruspiro-arch-aarch64" }
-#ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git", branch = "development" }
+ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git", branch = "development" }
 ruspiro-cache = { git = "https://github.com/RusPiRo/ruspiro-cache.git", branch = "development" }
