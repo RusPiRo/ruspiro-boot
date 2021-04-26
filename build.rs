@@ -15,7 +15,7 @@ fn main() {
   let script_location = env::current_dir().unwrap();
 
   if let Some(target_arch) = env::var_os("CARGO_CFG_TARGET_ARCH") {
-    if target_arch == "aarch64" {
+    if target_arch == "aarch64" && env::var("DOCS_RS").is_err() {
       cc::Build::new()
         .file("src/asm/aarch64/bootstrap.S")
         .flag("-march=armv8-a")

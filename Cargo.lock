@@ -34,7 +34,7 @@ dependencies = [
 
 [[package]]
 name = "ruspiro-boot"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "cc",
  "log",
