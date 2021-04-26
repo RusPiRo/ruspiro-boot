@@ -27,9 +27,23 @@ env = { FEATURES = "" }
 command = "cargo"
 args = ["doc", "--features", "${FEATURES}", "--open"]
 
-[tasks.pi3]
+[tasks.test]
+env = { FEATURES = "" }
+command = "cargo"
+args = ["test", "--features", "${FEATURES}"]
+
+[tasks.pi3_singlecore]
 env = { FEATURES = "" }
 run_task = "build"
+dependencies = ["clean"]
+
+[tasks.pi3_multicore]
+env = { FEATURES = "multicore" }
+run_task = "build"
+dependencies = ["clean"]
+
+[tasks.pi3]
+dependencies = ["pi3_singlecore", "pi3_multicore"]
 
 [tasks.clean]
 command = "cargo"
