@@ -14,7 +14,7 @@
 //!
 //! This crates provides the startup routines that are needed to be run from a baremetal kernel on
 //! the RaspberryPi before execution could be handed over to Rust code.
-//! 
+//!
 //! The crate is only valid when compiled for the
 //! target architecture **aarch64**. However, event though this crate might be compiled for this target architecture it
 //! is tailor made for the Raspberry Pi 3. This crate may be used in other contexts at your own risk. To build your own
@@ -83,9 +83,12 @@
 //!
 
 mod exception;
-pub mod macros;
+mod macros;
+mod panic;
 
 pub use self::macros::*;
+#[cfg(feature = "multicore")]
+use core::ptr;
 use ruspiro_cache as cache;
 
 // TODO: verify if the stubs are really required

@@ -1,12 +1,16 @@
 # Changelog
 
+## :cat: v0.5.2
+
+Introduce the custom build target `aarch64-ruspiro` to the crate. This version also introduces an example folder (this is nmot published to crates.io) that contains a minimalistic Raspberry Pi 3 baremetal kernel using this boot crate.
+
 ## :cat: v0.5.1
 
 Migrate the actual travis-ci build pipeline to github actions
 
 ## :cat: v0.5.0
 
-Incorporate the basic excpetion handling within the boot loading crate instead of delegating the whole stuff to the `ruspiro-interrupt` crate. Now only the interrupt and fast-interrupt related exeptions will be delegated to an external crate that implements and exports this function: `extern "C" fn __isr_default() {}`.
+Incorporate the basic exception handling within the boot loading crate instead of delegating the whole stuff to the `ruspiro-interrupt` crate. Now only the interrupt and fast-interrupt related exeptions will be delegated to an external crate that implements and exports this function: `extern "C" fn __isr_default() {}`.
 
 - ### :bulb: Features
 

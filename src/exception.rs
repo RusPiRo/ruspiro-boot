@@ -47,7 +47,7 @@ pub enum ExceptionType {
 
 /// The default exception handler.
 /// This is the entry point for any exception taken at any core. The type gives the hint on what
-/// the exyception is about, sync, irq, etc. This entry point is called from the ``ruspiro-boot``
+/// the exception is about, sync, irq, etc. This entry point is called from the ``ruspiro-boot``
 /// crate when this is used for bootstrapping. Otherwise the custom bootstrapping need to properly
 /// setup the exception table and call this entry point with the required input
 ///

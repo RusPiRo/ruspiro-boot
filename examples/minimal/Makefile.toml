@@ -1,0 +1,41 @@
+#***********************************************************************************************************************
+# cargo make tasks to build the example for the Raspberry Pi
+#***********************************************************************************************************************
+[env.development]
+CC = "aarch64-none-elf-gcc"
+AR = "aarch64-none-elf-ar"
+CFLAGS = "-march=armv8-a -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mtune=cortex-a53"
+RUSTFLAGS = "-C target-cpu=cortex-a53 -C target-feature=+strict-align,+a53,+fp-armv8,+neon -C link-arg=-T./link64.ld"
+
+[tasks.build]
+command = "cargo"
+args = ["build", "--release", "--features", "${FEATURES}"]
+
+[tasks.kernel]
+command = "aarch64-none-elf-objcopy"
+args = ["-O", "binary", "./target/aarch64-ruspiro/release/kernel", "./target/kernel8.img"]
+dependencies = [
+    "build"
+]
+
+[tasks.pi3]
+env = { FEATURES = "" }
+run_task = "kernel"
+
+[tasks.qemu]
+command = "qemu-system-aarch64"
+args = ["-M", "raspi3", "-kernel", "./target/kernel8.img", "-nographic", "-serial", "null", "-serial", "mon:stdio",  "-d", "int,mmu", "-D", "qemu.log"]
+dependencies = [
+    "pi3"
+]
+
+[tasks.deploy]
+command = "cargo"
+args = ["ruspiro-push", "-k", "./target/kernel8.img", "-p", "COM3"]
+dependencies = [
+    "pi3"
+]
+
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
