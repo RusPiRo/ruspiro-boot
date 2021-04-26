@@ -1,12 +1,12 @@
 [package]
 name = "ruspiro-boot"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.5.1" # remember to update html_root_url
+version = "0.5.2" # remember to update html_root_url
 description = """
 Bare metal boot strapper code for the Raspberry Pi 3 to conviniently start a custom kernel within the Rust environment
 without the need to deal with all the initial setup like stack pointers, switch to the appropriate exeption level and getting all cores kicked off for processing of code compiled from Rust.
 """
-license = "Apache-2.0"
+license = "Apache-2.0 OR MIT"
 repository = "https://github.com/RusPiRo/ruspiro-boot/tree/v||VERSION||"
 documentation = "https://docs.rs/ruspiro-boot/||VERSION||"
 readme = "README.md"
@@ -17,7 +17,7 @@ edition = "2018"
 links = "ruspiro_boot"
 # compile the assembler parts before the rust compiler runs on this crate
 build = "build.rs"
-exclude = [".travis.yml", "Makefile.toml"]
+exclude = ["Makefile.toml", ".cargo/config.toml", "examples"]
 
 [badges]
 maintenance = { status = "actively-developed" }
@@ -28,9 +28,9 @@ maintenance = { status = "actively-developed" }
 cc = "~1.0"
 
 [dependencies]
-log = { version = "~0.4", default-features = false }
-ruspiro-register = "~0.5"
-ruspiro-cache = "~0.4"
+log = { version = "~0.4.14", default-features = false }
+ruspiro-register = "~0.5.4"
+ruspiro-cache = "~0.4.1"
 
 [features]
 # activate this feature to get multicore support 
@@ -38,11 +38,13 @@ multicore = [ ]
 
 # ensure the required features of the crate are active for the doc.rs build
 [package.metadata.docs.rs]
-targets = ["aarch64-unknown-none", "aarch64-unknown-linux-gnu"]
+default-target = "aarch64-unknown-linux-gnu"
 features = [
     "multicore"
 ]
 
 [patch.crates-io]
-ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git", branch = "master" }
-ruspiro-cache = { git = "https://github.com/RusPiRo/ruspiro-cache.git", branch = "master" }
+ruspiro-register = { path = "../ruspiro-register" }
+ruspiro-arch-aarch64 = { path = "../ruspiro-arch-aarch64" }
+#ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git", branch = "development" }
+ruspiro-cache = { git = "https://github.com/RusPiRo/ruspiro-cache.git", branch = "development" }

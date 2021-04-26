@@ -1,0 +1,15 @@
+[package]
+name = "boot-example"
+authors = ["André Borrmann <pspwizard@gmx.de>"]
+version = "0.0.1"
+edition = "2018"
+
+[[bin]]
+name = "kernel"
+path = "./src/main.rs"
+
+[build-dependencies]
+cc = "~1.0"
+
+[dependencies]
+ruspiro-boot = { path = "../../", features = ["multicore"] }
