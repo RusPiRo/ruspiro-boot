@@ -26,6 +26,8 @@ dependencies = [
 [[package]]
 name = "ruspiro-arch-aarch64"
 version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "487585439e7a06c60294325fd1016cf5841ecf39bc388088d7fe09938a5e8050"
 dependencies = [
  "ruspiro-register",
 ]
@@ -52,3 +54,4 @@ dependencies = [
 [[package]]
 name = "ruspiro-register"
 version = "0.5.4"
+source = "git+https://github.com/RusPiRo/ruspiro-register.git?branch=development#455ccee004af3c0b13136fd993277d13c6ac8949"
