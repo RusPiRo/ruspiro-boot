@@ -1,5 +1,13 @@
 # Changelog
 
+## :dog: v0.5.3
+
+This release aims to fix the build issue on doc.rs while the crate is uploaded to crates.io
+
+- ### :wrench: Maintenance
+
+  Disable building of the assembly on doc.rs within the build script.
+
 ## :cat: v0.5.2
 
 Introduce the custom build target `aarch64-ruspiro` to the crate. This version also introduces an example folder (this is nmot published to crates.io) that contains a minimalistic Raspberry Pi 3 baremetal kernel using this boot crate.
