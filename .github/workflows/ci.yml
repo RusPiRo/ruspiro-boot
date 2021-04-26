@@ -104,10 +104,11 @@ jobs:
           # extract current crate version from Cargo.toml
           echo 'CRATE_VERSION=v'$(sed -En 's/^version.*=.*\"(.*)\".*$/\1/p' < Cargo.toml) >> $GITHUB_ENV
           # retrieve last release version from github
-          echo 'LAST_VERSION='$(curl --silent "https://api.github.com/repos/${{ env.GITHUB_REPOSITORY }}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') >> $GITHUB_ENV
+          echo 'LAST_VERSION='$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') >> $GITHUB_ENV
 
-      - name: Verify latest version
-        run: echo 'LAST_VERSION='${env.LAST_VERSION:-v0.0.0} >> $GITHUB_ENV
+      - if: ${{ env.LAST_VERSION == '' }}
+        name: Set base version
+        run: echo 'LAST_VERSION='v0.0.0 >> $GITHUB_ENV
 
       - name: Create Tag
         run: |
