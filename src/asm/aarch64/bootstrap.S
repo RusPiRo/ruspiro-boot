@@ -17,8 +17,8 @@
  * License: Apache License 2.0 / MIT
  **********************************************************************************************************************/
 
- .global __boot // global entry point
- .global __hang // helper to savely "hang" a core with nothing else to do
+.global __boot // global entry point
+.global __hang // helper to savely "hang" a core with nothing else to do
 
 /***************************************************************************************************
  * main entry point using specific section that is ensured to be linked against the entrypoint
@@ -141,7 +141,7 @@ __switch_el2_to_el1:
     ret
 
 /***************************************************************************************************
- * savely hang the core
+ * safely hang the core
  * use the WFE instruction to save power while waiting for any event
  * wfe is triggered by any exception/interrupt raised, but as long as there is no event
  * the core sleeps....

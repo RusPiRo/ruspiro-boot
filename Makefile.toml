@@ -13,37 +13,28 @@ AR = "aarch64-linux-gnu-ar"
 CFLAGS = "-march=armv8-a -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mtune=cortex-a53"
 RUSTFLAGS = "-C target-cpu=cortex-a53 -C target-feature=+strict-align,+a53,+fp-armv8,+neon -C link-arg=-T./link64.ld"
 
-[tasks.build]
-command = "cargo"
-args = ["build", "--release", "--features", "${FEATURES}"]
-
 [tasks.clippy]
-env = { FEATURES = "" }
+env = { FEATURES = "panic, multicore" }
 command = "cargo"
 args = ["clippy", "--features", "${FEATURES}"]
 
 [tasks.doc]
-env = { FEATURES = "" }
+env = { FEATURES = "panic, multicore" }
 command = "cargo"
 args = ["doc", "--features", "${FEATURES}", "--open"]
 
-[tasks.test]
-env = { FEATURES = "" }
+[tasks.singlecore]
+env = { FEATURES = "panic" }
 command = "cargo"
-args = ["test", "--features", "${FEATURES}"]
+args = ["build", "--release", "--features", "${FEATURES}"]
 
-[tasks.pi3_singlecore]
-env = { FEATURES = "" }
-run_task = "build"
-dependencies = ["clean"]
+[tasks.multicore]
+env = { FEATURES = "multicore, panic" }
+command = "cargo"
+args = ["build", "--release", "--features", "${FEATURES}"]
 
-[tasks.pi3_multicore]
-env = { FEATURES = "multicore" }
-run_task = "build"
-dependencies = ["clean"]
-
-[tasks.pi3]
-dependencies = ["pi3_singlecore", "pi3_multicore"]
+[tasks.build]
+dependencies = ["singlecore", "multicore"]
 
 [tasks.clean]
 command = "cargo"
@@ -55,6 +46,6 @@ command = "cargo"
 args = ["publish", "--dry-run", "--features", "${FEATURES}"]
 
 [tasks.publish]
-env = { FEATURES = "" }
+env = { FEATURES = "panic, multicore" }
 command = "cargo"
 args = ["publish", "--token", "${CRATES_TOKEN}", "--allow-dirty", "--features", "${FEATURES}"]
