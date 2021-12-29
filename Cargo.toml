@@ -1,7 +1,7 @@
 [package]
 name = "ruspiro-boot"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.5.3" # remember to update html_root_url
+version = "0.5.4" # remember to update html_root_url
 description = """
 Bare metal boot strapper code for the Raspberry Pi 3 to conviniently start a custom kernel within the Rust environment
 without the need to deal with all the initial setup like stack pointers, switch to the appropriate exeption level and getting all cores kicked off for processing of code compiled from Rust.
@@ -12,7 +12,7 @@ documentation = "https://docs.rs/ruspiro-boot/||VERSION||"
 readme = "README.md"
 keywords = ["RusPiRo", "aarch64", "boot", "baremetal", "multicore"]
 categories = ["no-std", "embedded"]
-edition = "2018"
+edition = "2021"
 # define a linkage name to ensure this crate is ever beeing linked once into a final binary
 links = "ruspiro_boot"
 # compile the assembler parts before the rust compiler runs on this crate
@@ -29,18 +29,22 @@ cc = "~1.0"
 
 [dependencies]
 log = { version = "~0.4.14", default-features = false }
-ruspiro-register = "~0.5.4"
+ruspiro-register = "~0.5.5"
 ruspiro-cache = "~0.4.1"
 
 [features]
+default = ["panic"]
 # activate this feature to get multicore support 
-multicore = [ ]
+multicore = []
+# activate this feature to provide a default panic handler
+panic = []
 
 # ensure the required features of the crate are active for the doc.rs build
 [package.metadata.docs.rs]
 default-target = "aarch64-unknown-linux-gnu"
 features = [
-    "multicore"
+    "multicore",
+    "panic"
 ]
 
 [patch.crates-io]

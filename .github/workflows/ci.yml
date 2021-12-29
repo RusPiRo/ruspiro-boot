@@ -27,7 +27,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: nightly-2021-12-24
           override: true
           components: rust-src, llvm-tools-preview
           target: aarch64-unknown-none
@@ -44,7 +44,7 @@ jobs:
           cat Cargo.toml
 
       - name: Compile
-        run: cargo make pi3 --profile pipeline
+        run: cargo make build --profile pipeline
 
   publish_dry:
     name: Run Cargo Publish Dry-Run
@@ -62,7 +62,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: nightly-2021-12-24
           override: true
           components: rust-src, llvm-tools-preview
           target: aarch64-unknown-none
@@ -152,7 +152,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: nightly-2021-12-24
           override: true
           components: rust-src, llvm-tools-preview
           target: aarch64-unknown-none
@@ -174,5 +174,7 @@ jobs:
           # and the README.md
           sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' README.md
         
-      - name: Publish-Dry-Run
-        run: cargo make publish --env CRATES_TOKEN=${{ secrets.CRATES_TOKEN }} --profile pipeline
+      - name: Publish
+        env:
+          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
+        run: cargo make -t publish --profile pipeline

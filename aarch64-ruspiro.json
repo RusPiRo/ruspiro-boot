@@ -19,14 +19,6 @@
     "target-family": "unix",
     "target-mcount": "\u0001_mcount",
     "target-pointer-width": "64",
-    "unsupported-abis": [
-      "stdcall",
-      "fastcall",
-      "vectorcall",
-      "thiscall",
-      "win64",
-      "sysv64"
-    ],
     "vendor": "unknown",
     "panic-strategy": "abort",
     "disable-redzone": true,

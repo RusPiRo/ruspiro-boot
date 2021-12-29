@@ -1,6 +1,12 @@
 # Changelog
 
-## :dog: v0.5.3
+## :cat: v0.5.4
+
+- ### :bulb: Features
+
+  - place the default panic handler implementation behind a feature flag. This feature is enabled by default.
+  
+## :cat: v0.5.3
 
 This release aims to fix the build issue on doc.rs while the crate is uploaded to crates.io
 
