@@ -19,6 +19,7 @@ both architectures and the execution is tested on a Raspberry Pi 3 B+.
 Feature          | Purpose
 -----------------|--------------------------
 `multicore`      | Compiles the multi-core version of the crate, kicking off all 4 cores of the Raspberry Pi.
+`panic`          | Enable the default panic handler. This feature is enabled by default.
 
 ## Usage
 

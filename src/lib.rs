@@ -6,7 +6,7 @@
  **********************************************************************************************************************/
 #![doc(html_root_url = "https://docs.rs/ruspiro-boot/||VERSION||")]
 #![no_std]
-#![feature(llvm_asm, lang_items, linkage)]
+#![feature(lang_items, linkage)]
 // this crate does only compile with valid content if the target architecture is AARCH64!
 #![cfg(target_arch = "aarch64")]
 
@@ -44,9 +44,10 @@
 //!
 //! # Features
 //!
-//! Feature         | Description
-//! ----------------|------------------------------------------------------------------------------
-//! ``multicore``   | Enables the compilation of the multi core boot sequence. Without it only the main core 0 is running.
+//! Feature       | Description
+//! --------------|------------------------------------------------------------------------------
+//! `multicore`   | Enables the compilation of the multi core boot sequence. Without it only the main core 0 is running.
+//! `panic`       | Enables the default panic handler. This feature is enabled by default
 //!
 //! ## Hint:
 //! To successfully build a bare metal binary/kernel that depends on this one to perform the boot
@@ -140,10 +141,10 @@ fn kickoff_next_core(core: u32) {
     _ => return,
   };
   unsafe {
-    ptr::write_volatile(jump_store as *mut u64, 0x80000); //__boot as *const () as u64);
-                                                          // as this core may have caches enabled, flush it so the other core
-                                                          // sees the correct data on memory and the write does not only hit the cache
+    ptr::write_volatile(jump_store as *mut u64, 0x8_0000);
+    // as this core may have caches enabled, flush it so the other core
+    // sees the correct data on memory and the write does not only hit the cache
     cache::flush_dcache_range(0xe0, 0x10);
-    llvm_asm!("sev"); // trigger an event to wake up the sleeping cores
+    core::arch::asm!("sev"); // trigger an event to wake up the sleeping cores
   }
 }

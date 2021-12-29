@@ -4,9 +4,9 @@ version = 3
 
 [[package]]
 name = "cc"
-version = "1.0.67"
+version = "1.0.72"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3c69b077ad434294d3ce9f1f6143a2a4b89a8a2d54ef813d85003a4fd1137fd"
+checksum = "22a9137b95ea06864e018375b72adfb7db6e6f68cfc8df5a04d00288050485ee"
 
 [[package]]
 name = "cfg-if"
@@ -25,16 +25,16 @@ dependencies = [
 
 [[package]]
 name = "ruspiro-arch-aarch64"
-version = "0.1.4"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "487585439e7a06c60294325fd1016cf5841ecf39bc388088d7fe09938a5e8050"
+checksum = "60ebe116b71a6c9c1253b2fce62e1337d714ce7dc3a5e78da87fc3e69e4c9407"
 dependencies = [
  "ruspiro-register",
 ]
 
 [[package]]
 name = "ruspiro-boot"
-version = "0.5.3"
+version = "0.5.4"
 dependencies = [
  "cc",
  "log",
@@ -53,5 +53,5 @@ dependencies = [
 
 [[package]]
 name = "ruspiro-register"
-version = "0.5.4"
-source = "git+https://github.com/RusPiRo/ruspiro-register.git?branch=development#455ccee004af3c0b13136fd993277d13c6ac8949"
+version = "0.5.5"
+source = "git+https://github.com/RusPiRo/ruspiro-register.git?branch=development#51e4bd82636dd69e447f4626a60ce13c67957f21"
